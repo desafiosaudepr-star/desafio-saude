@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#4CAF7D">
+<title>Mais Saúde na Rotina</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icone-192.png">
+<link rel="apple-touch-icon" href="icons/icone-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #4CAF7D;
+    --verde-escuro: #2f7d55;
+    --menta: #A8E0C5;
+    --agua: #5FC5D6;
+    --pessego: #F6A96B;
+    --sol: #F6D06B;
+    --fundo: #F7FAF7;
+    --texto: #2E3A34;
+    --texto-suave: #6b7a72;
+    --erro: #c0453f;
+    --vidro: rgba(255,255,255,0.72);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, 'Segoe UI', Arial, sans-serif;
+    background:
+      radial-gradient(1000px 500px at 110% -10%, rgba(95,197,214,0.18), transparent 60%),
+      radial-gradient(900px 480px at -10% 0%, rgba(168,224,197,0.35), transparent 55%),
+      var(--fundo);
+    color: var(--texto);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+  h1, h2, h3, .display { font-family: 'Nunito', 'Inter', sans-serif; }
+
+  /* ---------- barra superior e drawer ---------- */
+  header {
+    position: sticky; top: 0; z-index: 30;
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px;
+    background: var(--vidro);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(76,175,125,0.18);
+  }
+  header img { width: 34px; height: 34px; border-radius: 9px; }
+  header .titulo { font-family: 'Nunito'; font-weight: 800; font-size: 1.05rem; color: var(--verde-escuro); flex: 1; }
+  .btn-menu {
+    width: 40px; height: 40px; border: none; background: transparent;
+    display: flex; flex-direction: column; justify-content: center; gap: 5px;
+    cursor: pointer; padding: 8px;
+  }
+  .btn-menu span { display: block; height: 2.5px; background: var(--verde-escuro); border-radius: 2px; transition: 0.2s; }
+  .drawer-fundo {
+    position: fixed; inset: 0; background: rgba(46,58,52,0.35);
+    opacity: 0; pointer-events: none; transition: opacity 0.25s; z-index: 40;
+  }
+  .drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(78vw, 300px);
+    background: var(--vidro); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    box-shadow: -8px 0 30px rgba(0,0,0,0.12);
+    transform: translateX(105%); transition: transform 0.28s ease; z-index: 50;
+    padding: 22px 18px; display: flex; flex-direction: column; gap: 6px;
+  }
+  body.menu-aberto .drawer { transform: translateX(0); }
+  body.menu-aberto .drawer-fundo { opacity: 1; pointer-events: auto; }
+  .drawer .quem { font-weight: 600; color: var(--verde-escuro); padding: 8px 10px 16px; border-bottom: 1px solid rgba(76,175,125,0.25); margin-bottom: 8px; }
+  .drawer button {
+    text-align: left; border: none; background: transparent; padding: 12px 10px;
+    font-size: 0.95rem; font-family: 'Inter'; color: var(--texto);
+    border-radius: 10px; cursor: pointer;
+  }
+  .drawer button:hover { background: rgba(168,224,197,0.35); }
+  .drawer .breve { color: var(--texto-suave); font-size: 0.8rem; padding: 10px 10px 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .drawer .desativado { color: #a9b6af; cursor: default; }
+  .drawer .desativado:hover { background: transparent; }
+
+  /* ---------- telas ---------- */
+  .tela { display: none; max-width: 560px; margin: 0 auto; padding: 20px 16px 110px; }
+  .tela.ativa { display: block; }
+
+  .cartao {
+    background: var(--vidro);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(76,175,125,0.22);
+    border-radius: 18px; padding: 20px;
+    box-shadow: 0 4px 18px rgba(46,58,52,0.06);
+    margin-bottom: 16px;
+  }
+  label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--verde-escuro); margin: 12px 0 5px; }
+  input {
+    width: 100%; padding: 12px 14px; border-radius: 12px;
+    border: 1.5px solid #d7e6dd; background: #fff; font-size: 1rem; font-family: 'Inter';
+  }
+  input:focus { outline: none; border-color: var(--agua); box-shadow: 0 0 0 3px rgba(95,197,214,0.18); }
+  .botao {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    margin-top: 16px; padding: 13px 26px; border: none; border-radius: 26px;
+    background: linear-gradient(135deg, var(--verde), #3f9a6e);
+    color: #fff; font-weight: 700; font-size: 1rem; font-family: 'Nunito'; cursor: pointer;
+    transition: transform 0.12s, filter 0.15s; width: 100%;
+  }
+  .botao:hover { filter: brightness(0.95); }
+  .botao:active { transform: scale(0.98); }
+  .botao:disabled { background: #b9c9c0; cursor: not-allowed; }
+  .botao.secundario { background: transparent; color: var(--verde-escuro); border: 1.5px solid var(--verde); }
+  .aviso { margin-top: 12px; padding: 11px 14px; border-radius: 12px; font-size: 0.88rem; display: none; white-space: pre-wrap; }
+  .aviso.erro { display: block; background: #fdecea; border: 1px solid var(--erro); color: #8a2e2a; }
+  .aviso.ok { display: block; background: #e8f7ee; border: 1px solid var(--verde); color: #1e5c3c; }
+
+  /* ---------- login ---------- */
+  #telaLogin .hero { text-align: center; padding: 34px 10px 18px; }
+  #telaLogin .hero img { width: 84px; height: 84px; border-radius: 22px; box-shadow: 0 8px 24px rgba(76,175,125,0.35); }
+  #telaLogin .hero h1 { font-size: 1.7rem; margin: 14px 0 2px; color: var(--verde-escuro); font-weight: 800; }
+  #telaLogin .hero p { color: var(--texto-suave); margin: 0; font-size: 0.95rem; }
+
+  /* ---------- consentimento ---------- */
+  #telaConsent h2 { color: var(--verde-escuro); margin-top: 0; }
+  #telaConsent ul { padding-left: 18px; margin: 10px 0; }
+  #telaConsent li { margin: 6px 0; font-size: 0.93rem; }
+
+  /* ---------- meu dia ---------- */
+  .saudacao { padding: 6px 4px 12px; }
+  .saudacao h2 { margin: 0; font-size: 1.35rem; color: var(--verde-escuro); font-weight: 800; }
+  .saudacao p { margin: 2px 0 0; color: var(--texto-suave); font-size: 0.9rem; }
+  .faixa-info {
+    background: rgba(246,208,107,0.25); border: 1px solid var(--sol);
+    border-radius: 12px; padding: 10px 14px; font-size: 0.86rem; margin-bottom: 14px; display: none;
+  }
+  .seletor-dia { display: flex; gap: 8px; margin-bottom: 14px; }
+  .seletor-dia button {
+    flex: 1; padding: 10px; border-radius: 14px; border: 1.5px solid rgba(76,175,125,0.35);
+    background: #fff; font-family: 'Inter'; font-weight: 600; font-size: 0.9rem; color: var(--texto);
+    cursor: pointer;
+  }
+  .seletor-dia button.ativo { background: var(--verde); color: #fff; border-color: var(--verde); }
+  .grupo-titulo { font-family: 'Nunito'; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.05em; text-transform: uppercase; margin: 18px 4px 8px; }
+  .grupo-titulo.ganha { color: var(--verde-escuro); }
+  .grupo-titulo.perde { color: var(--pessego); }
+  .tarefa {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--vidro); border: 1.5px solid rgba(76,175,125,0.2);
+    border-radius: 16px; padding: 13px 14px; margin-bottom: 9px;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    user-select: none;
+  }
+  .tarefa:active { transform: scale(0.99); }
+  .tarefa .icone { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; }
+  .tarefa .txt { flex: 1; font-size: 0.9rem; }
+  .tarefa .txt .min { color: var(--texto-suave); font-size: 0.78rem; }
+  .tarefa .check {
+    width: 28px; height: 28px; border-radius: 50%; border: 2px solid #c9dcd2;
+    display: flex; align-items: center; justify-content: center; color: transparent; font-weight: 800; flex-shrink: 0;
+    transition: 0.15s;
+  }
+  .tarefa.marcada.g1 { background: rgba(168,224,197,0.45); border-color: var(--verde); }
+  .tarefa.marcada.g1 .check { background: var(--verde); border-color: var(--verde); color: #fff; }
+  .tarefa.marcada.g2 { background: rgba(246,169,107,0.22); border-color: var(--pessego); }
+  .tarefa.marcada.g2 .check { background: var(--pessego); border-color: var(--pessego); color: #fff; }
+  .tarefa.salvando { opacity: 0.55; pointer-events: none; }
+
+  /* rodape fixo com saldo (botao salvar fixo do padrao do app Bolao SSGP,
+     aqui como painel de saldo, ja que o salvamento e automatico a cada toque) */
+  .rodape-saldo {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
+    background: var(--vidro); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(76,175,125,0.25);
+    padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+    display: none; align-items: center; gap: 14px; max-width: 100%;
+  }
+  .rodape-saldo .num { font-family: 'Nunito'; font-weight: 800; font-size: 1.5rem; color: var(--verde-escuro); min-width: 56px; }
+  .rodape-saldo .rotulo { flex: 1; font-size: 0.82rem; color: var(--texto-suave); }
+  .rodape-saldo .streak { font-size: 0.85rem; font-weight: 700; color: var(--pessego); white-space: nowrap; }
+  .rodape-saldo .estado { font-size: 0.75rem; color: var(--texto-suave); }
+
+  /* confete */
+  .confete { position: fixed; top: -12px; z-index: 60; font-size: 1.2rem; animation: cair 2.6s linear forwards; pointer-events: none; }
+  @keyframes cair { to { transform: translateY(110vh) rotate(540deg); opacity: 0.2; } }
+
+  .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: rodar 0.8s linear infinite; }
+  @keyframes rodar { to { transform: rotate(360deg); } }
+  .centro { text-align: center; padding: 40px 0; color: var(--texto-suave); }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header id="topo" style="display:none">
+  <img src="icons/icone-192.png" alt="">
+  <div class="titulo">Mais Saúde na Rotina</div>
+  <button class="btn-menu" id="btnMenu" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+</header>
+
+<div class="drawer-fundo" id="drawerFundo"></div>
+<nav class="drawer" id="drawer" aria-label="Menu">
+  <div class="quem" id="drawerNome">Participante</div>
+  <button data-acao="meudia">Meu Dia</button>
+  <div class="breve">Em breve (Fase 3)</div>
+  <button class="desativado">Progresso</button>
+  <button class="desativado">Ranking</button>
+  <button class="desativado">Mural</button>
+  <button class="desativado">Minhas Medidas</button>
+  <button class="desativado">Metas</button>
+  <div class="breve">Conta</div>
+  <button data-acao="senha">Trocar minha senha</button>
+  <button data-acao="sair">Sair</button>
+</nav>
+
+<!-- LOGIN -->
+<section class="tela ativa" id="telaLogin">
+  <div class="hero">
+    <img src="icons/icone-192.png" alt="Mais Saúde na Rotina">
+    <h1>Mais Saúde na Rotina</h1>
+    <p>Pequenos hábitos, grandes vitórias.</p>
+  </div>
+  <div class="cartao">
+    <label for="loginUsuario">Usuário</label>
+    <input id="loginUsuario" autocomplete="username" placeholder="ex.: anamaria">
+    <label for="loginSenha">Senha</label>
+    <input id="loginSenha" type="password" autocomplete="current-password" placeholder="sua senha">
+    <button class="botao" id="btnEntrar">Entrar</button>
+    <div class="aviso" id="avisoLogin"></div>
+  </div>
+</section>
+
+<!-- CONSENTIMENTO LGPD -->
+<section class="tela" id="telaConsent">
+  <div class="cartao">
+    <h2>Antes de começar</h2>
+    <p style="font-size:0.93rem">O desafio registra hábitos de saúde, que a lei brasileira (LGPD) trata como dados sensíveis. Por isso pedimos seu consentimento claro:</p>
+    <ul>
+      <li><strong>O que será registrado:</strong> suas marcações diárias das tarefas do desafio e, se você quiser, suas metas pessoais e medidas corporais.</li>
+      <li><strong>Para que:</strong> calcular seus pontos, montar o ranking e os indicadores do grupo.</li>
+      <li><strong>Quem vê o quê:</strong> o detalhe das suas tarefas e as suas medidas são só seus; os demais veem apenas seu nome e sua pontuação total.</li>
+      <li><strong>Você pode sair quando quiser</strong> e pedir a exclusão dos seus dados ao organizador.</li>
+    </ul>
+    <button class="botao" id="btnAceitar">Li e concordo, quero participar</button>
+    <div class="aviso" id="avisoConsent"></div>
+  </div>
+</section>
+
+<!-- TROCAR SENHA -->
+<section class="tela" id="telaSenha">
+  <div class="cartao">
+    <h2 style="color:var(--verde-escuro);margin-top:0">Trocar minha senha</h2>
+    <label for="novaSenha">Nova senha (mínimo 6 caracteres)</label>
+    <input id="novaSenha" type="password" autocomplete="new-password">
+    <label for="novaSenha2">Repita a nova senha</label>
+    <input id="novaSenha2" type="password" autocomplete="new-password">
+    <button class="botao" id="btnTrocarSenha">Salvar nova senha</button>
+    <button class="botao secundario" id="btnVoltarSenha">Voltar</button>
+    <div class="aviso" id="avisoSenha"></div>
+  </div>
+</section>
+
+<!-- MEU DIA -->
+<section class="tela" id="telaMeuDia">
+  <div class="saudacao">
+    <h2 id="ola">Olá!</h2>
+    <p id="dataExtenso"></p>
+  </div>
+  <div class="faixa-info" id="faixaPeriodo"></div>
+  <div class="seletor-dia">
+    <button id="diaOntem">Ontem</button>
+    <button id="diaHoje" class="ativo">Hoje</button>
+  </div>
+  <div id="listaTarefas" class="centro">Carregando suas tarefas...</div>
+</section>
+
+<div class="rodape-saldo" id="rodapeSaldo">
+  <div class="num" id="saldoNum">0</div>
+  <div class="rotulo">pontos do dia<br><span class="estado" id="estadoSalvar">tudo salvo</span></div>
+  <div class="streak" id="streakTxt"></div>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURACAO: preencha estas duas linhas com os dados do seu projeto
+   (painel do Supabase, em Settings > API)
+   ===================================================================== */
+const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";      // ex.: https://xxxxxxx.supabase.co
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM"; // chave anon public
+/* ===================================================================== */
+
+const ICONES_TEMA = { "1": "🌙", "2": "🍎", "3": "💧", "4": "🏃", "5": "📵" };
+const CORES_TEMA  = { "1": "rgba(95,197,214,0.25)", "2": "rgba(168,224,197,0.5)", "3": "rgba(95,197,214,0.35)", "4": "rgba(246,169,107,0.3)", "5": "rgba(246,208,107,0.35)" };
+
+let sessao = null;        // { access_token, refresh_token, user: {id} }
+let perfil = null;        // linha de public.perfis
+let desafio = null;       // edicao ativa
+let tarefas = [];         // catalogo
+let marcadosPorDia = {};  // { 'YYYY-MM-DD': Set(tarefa_id) }
+let diaSelecionado = null;
+
+/* ---------------- utilidades ---------------- */
+function $(id) { return document.getElementById(id); }
+function mostraTela(id) {
+  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+  $(id).classList.add("ativa");
+  $("topo").style.display = (id === "telaLogin" || id === "telaConsent") ? "none" : "flex";
+  $("rodapeSaldo").style.display = (id === "telaMeuDia") ? "flex" : "none";
+  window.scrollTo(0, 0);
+}
+function aviso(id, tipo, txt) {
+  const el = $(id);
+  el.className = "aviso " + tipo;
+  el.textContent = txt;
+}
+function limpaAviso(id) { $(id).className = "aviso"; $(id).textContent = ""; }
+function dataLocalISO(d) {
+  const p = n => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate());
+}
+function hojeISO() { return dataLocalISO(new Date()); }
+function ontemISO() { const d = new Date(); d.setDate(d.getDate()-1); return dataLocalISO(d); }
+
+async function api(caminho, opcoes = {}) {
+  const cab = {
+    "apikey": SUPABASE_ANON,
+    "Content-Type": "application/json",
+    ...(sessao ? { "Authorization": "Bearer " + sessao.access_token } : {}),
+    ...(opcoes.headers || {})
+  };
+  const r = await fetch(SUPABASE_URL + caminho, { ...opcoes, headers: cab });
+  const texto = await r.text();
+  let corpo = null;
+  try { corpo = texto ? JSON.parse(texto) : null; } catch { corpo = texto; }
+  if (!r.ok) {
+    const msg = (corpo && (corpo.message || corpo.msg || corpo.error_description || corpo.erro)) || ("HTTP " + r.status);
+    throw new Error(msg);
+  }
+  return corpo;
+}
+
+/* ---------------- sessao ---------------- */
+function guardaSessao(s) {
+  sessao = { access_token: s.access_token, refresh_token: s.refresh_token, user: s.user };
+  try { localStorage.setItem("ms_sessao", JSON.stringify({ refresh_token: s.refresh_token })); } catch {}
+}
+function apagaSessao() {
+  sessao = null; perfil = null;
+  try { localStorage.removeItem("ms_sessao"); } catch {}
+}
+async function tentaSessaoSalva() {
+  let salvo = null;
+  try { salvo = JSON.parse(localStorage.getItem("ms_sessao") || "null"); } catch {}
+  if (!salvo || !salvo.refresh_token) return false;
+  try {
+    const s = await api("/auth/v1/token?grant_type=refresh_token", {
+      method: "POST", body: JSON.stringify({ refresh_token: salvo.refresh_token })
+    });
+    guardaSessao(s);
+    return true;
+  } catch { apagaSessao(); return false; }
+}
+
+/* ---------------- login ---------------- */
+$("btnEntrar").addEventListener("click", async () => {
+  limpaAviso("avisoLogin");
+  const usuario = $("loginUsuario").value.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+  const senha = $("loginSenha").value;
+  if (!usuario || !senha) { aviso("avisoLogin", "erro", "Preencha usuário e senha."); return; }
+  const btn = $("btnEntrar");
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Entrando...';
+  try {
+    const s = await api("/auth/v1/token?grant_type=password", {
+      method: "POST",
+      body: JSON.stringify({ email: usuario + "@desafio.saude", password: senha })
+    });
+    guardaSessao(s);
+    await entrar();
+  } catch (e) {
+    const m = /invalid/i.test(e.message) ? "Usuário ou senha incorretos." : e.message;
+    aviso("avisoLogin", "erro", m);
+  } finally {
+    btn.disabled = false; btn.textContent = "Entrar";
+  }
+});
+$("loginSenha").addEventListener("keydown", ev => { if (ev.key === "Enter") $("btnEntrar").click(); });
+
+async function entrar() {
+  const uid = sessao.user.id;
+  const linhas = await api("/rest/v1/perfis?id=eq." + uid + "&select=*");
+  perfil = linhas && linhas[0];
+  if (!perfil) { aviso("avisoLogin", "erro", "Seu perfil não foi encontrado. Fale com o organizador."); apagaSessao(); return; }
+  $("drawerNome").textContent = perfil.apelido || perfil.nome;
+  if (!perfil.consentimento_lgpd) { mostraTela("telaConsent"); return; }
+  await abrirMeuDia();
+}
+
+/* ---------------- consentimento ---------------- */
+$("btnAceitar").addEventListener("click", async () => {
+  limpaAviso("avisoConsent");
+  const btn = $("btnAceitar");
+  btn.disabled = true;
+  try {
+    await api("/rest/v1/perfis?id=eq." + sessao.user.id, {
+      method: "PATCH",
+      headers: { "Prefer": "return=minimal" },
+      body: JSON.stringify({ consentimento_lgpd: true, consentimento_data: new Date().toISOString() })
+    });
+    perfil.consentimento_lgpd = true;
+    await abrirMeuDia();
+  } catch (e) {
+    aviso("avisoConsent", "erro", "Não foi possível registrar o aceite: " + e.message);
+  } finally { btn.disabled = false; }
+});
+
+/* ---------------- meu dia ---------------- */
+async function abrirMeuDia() {
+  mostraTela("telaMeuDia");
+  $("ola").textContent = "Olá, " + (perfil.apelido || perfil.nome.split(" ")[0]) + "!";
+  diaSelecionado = hojeISO();
+  atualizaSeletorDia();
+  $("dataExtenso").textContent = new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" });
+  try {
+    const [ds, ts] = await Promise.all([
+      api("/rest/v1/desafios?status=eq.ativo&select=id,nome,data_inicio,data_fim&limit=1"),
+      api("/rest/v1/tarefas?ativo=eq.true&select=id,codigo,grupo,descricao,valor_ponto,minimo_padrao&order=grupo.asc,ordem.asc")
+    ]);
+    desafio = ds && ds[0];
+    tarefas = ts || [];
+    if (!desafio) { $("listaTarefas").innerHTML = "<div class='centro'>Nenhuma edição ativa do desafio.</div>"; return; }
+    const hoje = hojeISO();
+    if (hoje < desafio.data_inicio) {
+      const fx = $("faixaPeriodo");
+      fx.style.display = "block";
+      fx.textContent = "A edição começa em " + desafio.data_inicio.split("-").reverse().join("/") + ". Você já pode conhecer o app e testar as marcações.";
+    } else if (hoje > desafio.data_fim) {
+      const fx = $("faixaPeriodo");
+      fx.style.display = "block";
+      fx.textContent = "Esta edição encerrou em " + desafio.data_fim.split("-").reverse().join("/") + ".";
+    }
+    await carregaLancamentos();
+    desenhaTarefas();
+    await atualizaStreak();
+  } catch (e) {
+    $("listaTarefas").innerHTML = "<div class='centro'>Erro ao carregar: " + e.message + "</div>";
+  }
+}
+
+async function carregaLancamentos() {
+  const uid = sessao.user.id;
+  const desde = ontemISO();
+  const linhas = await api("/rest/v1/lancamentos?user_id=eq." + uid + "&data=gte." + desde + "&select=data,tarefa_id,marcado");
+  marcadosPorDia = {};
+  (linhas || []).forEach(l => {
+    if (!marcadosPorDia[l.data]) marcadosPorDia[l.data] = new Set();
+    if (l.marcado) marcadosPorDia[l.data].add(l.tarefa_id);
+  });
+}
+
+function setMarcados(dia) {
+  if (!marcadosPorDia[dia]) marcadosPorDia[dia] = new Set();
+  return marcadosPorDia[dia];
+}
+
+function desenhaTarefas() {
+  const marc = setMarcados(diaSelecionado);
+  const bloco = (grupo, titulo, classe) => {
+    const itens = tarefas.filter(t => t.grupo === grupo).map(t => {
+      const tema = t.codigo.split(".")[0];
+      const marcada = marc.has(t.id);
+      return `<div class="tarefa ${marcada ? "marcada" : ""} g${grupo}" data-id="${t.id}" role="button" tabindex="0" aria-pressed="${marcada}">
+        <div class="icone" style="background:${CORES_TEMA[tema] || "#eee"}">${ICONES_TEMA[tema] || "✅"}</div>
+        <div class="txt">${t.descricao}${t.minimo_padrao ? `<div class="min">mínimo: ${t.minimo_padrao}</div>` : ""}</div>
+        <div class="check">✓</div>
+      </div>`;
+    }).join("");
+    return `<div class="grupo-titulo ${classe}">${titulo}</div>` + itens;
+  };
+  $("listaTarefas").innerHTML =
+    bloco(1, "Ganha 1 ponto", "ganha") +
+    bloco(2, "Perde 1 ponto (marque se aconteceu)", "perde");
+  document.querySelectorAll(".tarefa").forEach(el => {
+    el.addEventListener("click", () => alternaTarefa(el));
+    el.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); alternaTarefa(el); } });
+  });
+  atualizaSaldo();
+}
+
+async function alternaTarefa(el) {
+  const id = el.dataset.id;
+  const marc = setMarcados(diaSelecionado);
+  const novo = !marc.has(id);
+  el.classList.add("salvando");
+  $("estadoSalvar").textContent = "salvando...";
+  try {
+    await api("/rest/v1/lancamentos?on_conflict=user_id,data,tarefa_id", {
+      method: "POST",
+      headers: { "Prefer": "resolution=merge-duplicates,return=minimal" },
+      body: JSON.stringify({
+        desafio_id: desafio.id,
+        user_id: sessao.user.id,
+        data: diaSelecionado,
+        tarefa_id: id,
+        marcado: novo
+      })
+    });
+    if (novo) marc.add(id); else marc.delete(id);
+    el.classList.toggle("marcada", novo);
+    el.setAttribute("aria-pressed", String(novo));
+    $("estadoSalvar").textContent = "tudo salvo";
+    atualizaSaldo();
+    await atualizaStreak();
+  } catch (e) {
+    $("estadoSalvar").textContent = "erro ao salvar";
+    const m = /48h|prazo/i.test(e.message) ? "O prazo de 48h para este dia expirou." : e.message;
+    alert("Não foi possível salvar: " + m);
+  } finally {
+    el.classList.remove("salvando");
+  }
+}
+
+function atualizaSaldo() {
+  const marc = setMarcados(diaSelecionado);
+  let saldo = 0;
+  tarefas.forEach(t => { if (marc.has(t.id)) saldo += t.valor_ponto; });
+  $("saldoNum").textContent = (saldo > 0 ? "+" : "") + saldo;
+  $("saldoNum").style.color = saldo >= 0 ? "var(--verde-escuro)" : "var(--erro)";
+  const positivas = tarefas.filter(t => t.grupo === 1).length;
+  if (saldo === positivas && positivas > 0) soltaConfete();
+}
+
+async function atualizaStreak() {
+  try {
+    const uid = sessao.user.id;
+    const linhas = await api("/rest/v1/lancamentos?user_id=eq." + uid + "&marcado=eq.true&select=data,tarefas(valor_ponto)");
+    const porDia = {};
+    (linhas || []).forEach(l => {
+      porDia[l.data] = (porDia[l.data] || 0) + ((l.tarefas && l.tarefas.valor_ponto) || 0);
+    });
+    let streak = 0;
+    const d = new Date();
+    if (!(porDia[dataLocalISO(d)] > 0)) d.setDate(d.getDate() - 1); // hoje ainda pode estar em aberto
+    while (porDia[dataLocalISO(d)] > 0) { streak++; d.setDate(d.getDate() - 1); }
+    $("streakTxt").textContent = streak > 0 ? "🔥 " + streak + (streak === 1 ? " dia" : " dias") : "";
+  } catch { /* streak e cosmetico; falha silenciosa */ }
+}
+
+let confeteFeito = false;
+function soltaConfete() {
+  if (confeteFeito) return;
+  confeteFeito = true;
+  const simbolos = ["🎉", "✨", "🍃", "💧", "⭐"];
+  for (let i = 0; i < 24; i++) {
+    const s = document.createElement("div");
+    s.className = "confete";
+    s.textContent = simbolos[i % simbolos.length];
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDelay = (Math.random() * 0.7) + "s";
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 3500);
+  }
+}
+
+/* seletor hoje/ontem */
+function atualizaSeletorDia() {
+  $("diaHoje").classList.toggle("ativo", diaSelecionado === hojeISO());
+  $("diaOntem").classList.toggle("ativo", diaSelecionado === ontemISO());
+}
+$("diaHoje").addEventListener("click", () => { diaSelecionado = hojeISO(); confeteFeito = true; atualizaSeletorDia(); desenhaTarefas(); });
+$("diaOntem").addEventListener("click", () => { diaSelecionado = ontemISO(); confeteFeito = true; atualizaSeletorDia(); desenhaTarefas(); });
+
+/* ---------------- trocar senha ---------------- */
+$("btnTrocarSenha").addEventListener("click", async () => {
+  limpaAviso("avisoSenha");
+  const s1 = $("novaSenha").value, s2 = $("novaSenha2").value;
+  if (s1.length < 6) { aviso("avisoSenha", "erro", "A senha precisa ter ao menos 6 caracteres."); return; }
+  if (s1 !== s2) { aviso("avisoSenha", "erro", "As senhas não conferem."); return; }
+  const btn = $("btnTrocarSenha"); btn.disabled = true;
+  try {
+    await api("/auth/v1/user", { method: "PUT", body: JSON.stringify({ password: s1 }) });
+    aviso("avisoSenha", "ok", "Senha alterada. Use a nova senha no próximo login.");
+    $("novaSenha").value = ""; $("novaSenha2").value = "";
+  } catch (e) {
+    aviso("avisoSenha", "erro", "Não foi possível alterar: " + e.message);
+  } finally { btn.disabled = false; }
+});
+$("btnVoltarSenha").addEventListener("click", () => mostraTela("telaMeuDia"));
+
+/* ---------------- drawer (padrao do app Bolao SSGP) ---------------- */
+function fechaMenu() { document.body.classList.remove("menu-aberto"); }
+$("btnMenu").addEventListener("click", () => document.body.classList.toggle("menu-aberto"));
+$("drawerFundo").addEventListener("click", fechaMenu);
+document.addEventListener("keydown", ev => { if (ev.key === "Escape") fechaMenu(); });
+window.addEventListener("resize", fechaMenu);
+$("drawer").addEventListener("click", ev => {
+  const acao = ev.target && ev.target.dataset && ev.target.dataset.acao;
+  if (!acao) return;
+  fechaMenu();
+  if (acao === "meudia") mostraTela("telaMeuDia");
+  if (acao === "senha") { limpaAviso("avisoSenha"); mostraTela("telaSenha"); }
+  if (acao === "sair") { apagaSessao(); mostraTela("telaLogin"); }
+});
+
+/* ---------------- inicio ---------------- */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+(async () => {
+  if (SUPABASE_URL.startsWith("COLE_AQUI")) {
+    aviso("avisoLogin", "erro", "Configuração pendente: edite o index.html e preencha SUPABASE_URL e SUPABASE_ANON (bloco CONFIGURACAO no topo do script).");
+    return;
+  }
+  if (await tentaSessaoSalva()) {
+    try { await entrar(); } catch { mostraTela("telaLogin"); }
+  }
+})();
+</script>
+</body>
+</html>
