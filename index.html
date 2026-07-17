@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <style>
   :root {
     --verde: #4CAF7D;
@@ -186,6 +187,59 @@
   .spinner { display: inline-block; width: 18px; height: 18px; border: 3px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: rodar 0.8s linear infinite; }
   @keyframes rodar { to { transform: rotate(360deg); } }
   .centro { text-align: center; padding: 40px 0; color: var(--texto-suave); }
+
+  /* ---------- fase 3 ---------- */
+  .cards-linha { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .mini-card { background: var(--vidro); border: 1px solid rgba(76,175,125,0.22); border-radius: 16px; padding: 14px; text-align: center; }
+  .mini-card .valor { font-family: 'Nunito'; font-weight: 800; font-size: 1.5rem; color: var(--verde-escuro); }
+  .mini-card .rot { font-size: 0.75rem; color: var(--texto-suave); }
+  .secao-titulo { font-family: 'Nunito'; font-weight: 800; font-size: 1rem; color: var(--verde-escuro); margin: 20px 4px 10px; }
+  .grafico-caixa { background: var(--vidro); border: 1px solid rgba(76,175,125,0.22); border-radius: 16px; padding: 12px; margin-bottom: 16px; }
+  .seletor-modo { display: flex; gap: 8px; margin: 4px 0 10px; }
+  .seletor-modo button { flex: 1; padding: 8px; border-radius: 12px; border: 1.5px solid rgba(76,175,125,0.35); background: #fff; font-family: 'Inter'; font-weight: 600; font-size: 0.82rem; cursor: pointer; color: var(--texto); }
+  .seletor-modo button.ativo { background: var(--agua); border-color: var(--agua); color: #fff; }
+  .lista-ind { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pilula { background: var(--vidro); border: 1px solid rgba(76,175,125,0.25); border-radius: 14px; padding: 9px 13px; font-size: 0.82rem; }
+  .pilula b { color: var(--verde-escuro); }
+  .linha-tarefa { display: flex; justify-content: space-between; gap: 10px; padding: 8px 4px; border-bottom: 1px dashed rgba(76,175,125,0.25); font-size: 0.85rem; }
+  .linha-tarefa .pct { font-weight: 700; color: var(--verde-escuro); white-space: nowrap; }
+
+  /* ranking */
+  .rank-item { display: flex; align-items: center; gap: 12px; background: var(--vidro); border: 1px solid rgba(76,175,125,0.2); border-radius: 14px; padding: 11px 14px; margin-bottom: 8px; }
+  .rank-item .pos { font-family: 'Nunito'; font-weight: 800; width: 30px; text-align: center; color: var(--texto-suave); }
+  .rank-item .nome { flex: 1; font-weight: 600; font-size: 0.92rem; }
+  .rank-item .pts { font-family: 'Nunito'; font-weight: 800; color: var(--verde-escuro); }
+  .rank-item.lider { background: rgba(246,208,107,0.3); border-color: var(--sol); }
+  .rank-item.eu { outline: 2px solid var(--agua); }
+  .btn-mini { border: none; background: transparent; color: var(--verde-escuro); font-size: 0.8rem; font-weight: 600; cursor: pointer; padding: 6px 8px; }
+
+  /* mural */
+  .mural-cab { display: flex; align-items: center; gap: 8px; width: 100%; background: var(--vidro); border: 1px solid rgba(76,175,125,0.25); border-radius: 16px; padding: 13px 16px; cursor: pointer; font-family: 'Nunito'; font-weight: 800; color: var(--verde-escuro); font-size: 0.95rem; }
+  .mural-cab .cont { background: var(--verde); color: #fff; border-radius: 12px; padding: 1px 9px; font-size: 0.8rem; }
+  .mural-cab .seta { margin-left: auto; transition: transform 0.2s; }
+  .mural-corpo { display: none; padding: 12px 2px 4px; }
+  .mural-aberto .mural-corpo { display: block; }
+  .mural-aberto .mural-cab .seta { transform: rotate(180deg); }
+  .bolha { background: var(--vidro); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(95,197,214,0.35); border-radius: 16px 16px 16px 4px; padding: 10px 13px; margin-bottom: 9px; animation: flutua 0.35s ease; }
+  @keyframes flutua { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .bolha .autor { font-size: 0.75rem; font-weight: 700; color: var(--verde-escuro); display: flex; align-items: center; gap: 6px; }
+  .bolha .autor .quando { font-weight: 400; color: var(--texto-suave); }
+  .bolha .msg { font-size: 0.9rem; margin: 3px 0 6px; word-break: break-word; }
+  .bolha .acoes { display: flex; gap: 6px; align-items: center; }
+  .bolha .reac { border: 1px solid rgba(76,175,125,0.3); background: #fff; border-radius: 12px; padding: 2px 8px; font-size: 0.8rem; cursor: pointer; }
+  .bolha .reac.minha { background: var(--menta); border-color: var(--verde); }
+  .bolha .apagar { margin-left: auto; border: none; background: transparent; cursor: pointer; font-size: 0.85rem; opacity: 0.6; }
+  .mural-envio { display: flex; gap: 8px; margin-top: 10px; }
+  .mural-envio input { flex: 1; }
+  .mural-envio button { margin-top: 0; width: auto; padding: 0 18px; border-radius: 14px; }
+  .emoji-fila { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+  .emoji-fila button { border: 1px solid rgba(76,175,125,0.3); background: #fff; border-radius: 10px; font-size: 1.05rem; padding: 4px 8px; cursor: pointer; }
+  .contador-car { font-size: 0.72rem; color: var(--texto-suave); text-align: right; margin-top: 4px; }
+
+  /* medidas e metas */
+  .grade-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
+  .medida-linha { display: flex; justify-content: space-between; gap: 8px; font-size: 0.83rem; padding: 8px 4px; border-bottom: 1px dashed rgba(76,175,125,0.25); align-items: center; }
+  .nota { font-size: 0.8rem; color: var(--texto-suave); margin-top: 8px; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -201,12 +255,10 @@
 <nav class="drawer" id="drawer" aria-label="Menu">
   <div class="quem" id="drawerNome">Participante</div>
   <button data-acao="meudia">Meu Dia</button>
-  <div class="breve">Em breve (Fase 3)</div>
-  <button class="desativado">Progresso</button>
-  <button class="desativado">Ranking</button>
-  <button class="desativado">Mural</button>
-  <button class="desativado">Minhas Medidas</button>
-  <button class="desativado">Metas</button>
+  <button data-acao="progresso">Progresso</button>
+  <button data-acao="turma">Ranking e Mural</button>
+  <button data-acao="medidas">Minhas Medidas</button>
+  <button data-acao="metas">Minhas Metas</button>
   <div class="breve">Conta</div>
   <button data-acao="senha">Trocar minha senha</button>
   <button data-acao="sair">Sair</button>
@@ -273,6 +325,95 @@
   <div id="listaTarefas" class="centro">Carregando suas tarefas...</div>
 </section>
 
+
+<!-- PROGRESSO -->
+<section class="tela" id="telaProgresso">
+  <div class="saudacao"><h2>Meu progresso</h2><p>Só você vê esta tela.</p></div>
+  <div class="cards-linha">
+    <div class="mini-card"><div class="valor" id="pgPontos">0</div><div class="rot">pontos totais</div></div>
+    <div class="mini-card"><div class="valor" id="pgPosicao">-</div><div class="rot">posição no ranking</div></div>
+    <div class="mini-card"><div class="valor" id="pgStreak">0</div><div class="rot">dias seguidos</div></div>
+    <div class="mini-card"><div class="valor" id="pgPerfeitos">0</div><div class="rot">dias perfeitos</div></div>
+  </div>
+  <div class="secao-titulo">Evolução da turma</div>
+  <div class="grafico-caixa"><canvas id="graficoEvolucao" height="220"></canvas></div>
+  <div class="secao-titulo">Você vs grupo</div>
+  <div class="grafico-caixa">
+    <div class="seletor-modo">
+      <button id="vsPontos" class="ativo">Por pontos</button>
+      <button id="vsPosicao">Por posição</button>
+    </div>
+    <canvas id="graficoVs" height="200"></canvas>
+  </div>
+  <div class="secao-titulo">Meus indicadores</div>
+  <div class="lista-ind" id="pgIndividuais"><span class="nota">Carregando...</span></div>
+  <div class="secao-titulo">Minha adesão por tarefa</div>
+  <div id="pgAdesao"><span class="nota">Carregando...</span></div>
+  <div class="secao-titulo">Indicadores do grupo (sem nomes)</div>
+  <div class="lista-ind" id="pgColetivos"><span class="nota">Carregando...</span></div>
+  <div class="secao-titulo">Tarefas do grupo (dos registros feitos)</div>
+  <div id="pgTarefasGrupo"><span class="nota">Carregando...</span></div>
+</section>
+
+<!-- RANKING E MURAL -->
+<section class="tela" id="telaTurma">
+  <div class="saudacao"><h2>A turma</h2><p id="turmaPeriodo"></p></div>
+
+  <div id="muralBloco">
+    <button class="mural-cab" id="muralCab">
+      💬 Mural da turma <span class="cont" id="muralCont">0</span> <span class="seta">▾</span>
+    </button>
+    <div class="mural-corpo">
+      <div id="muralLista"><div class="nota">Carregando recados...</div></div>
+      <div class="mural-envio">
+        <input id="muralTexto" maxlength="100" placeholder="Deixe um recado para a turma">
+        <button class="botao" id="muralEnviar">Enviar</button>
+      </div>
+      <div class="emoji-fila" id="muralEmojis"></div>
+      <div class="contador-car"><span id="muralChars">0</span>/100</div>
+      <div class="aviso" id="avisoMural"></div>
+    </div>
+  </div>
+
+  <div class="secao-titulo" style="display:flex;align-items:center">Ranking <button class="btn-mini" id="btnAtualizaRank" style="margin-left:auto">atualizar</button></div>
+  <div id="rankLista"><div class="nota">Carregando...</div></div>
+</section>
+
+<!-- MINHAS MEDIDAS -->
+<section class="tela" id="telaMedidas">
+  <div class="saudacao"><h2>Minhas medidas</h2><p>Acompanhamento pessoal. Ninguém mais vê, nem o organizador. Nada aqui vale ponto.</p></div>
+  <div class="cartao">
+    <label for="mdData">Data</label>
+    <input id="mdData" type="date">
+    <div class="grade-campos">
+      <div><label>Peso (kg)</label><input id="mdPeso" type="number" step="0.1" inputmode="decimal"></div>
+      <div><label>IMC</label><input id="mdImc" type="number" step="0.1" inputmode="decimal"></div>
+      <div><label>Gordura (%)</label><input id="mdGord" type="number" step="0.1" inputmode="decimal"></div>
+      <div><label>Massa de gordura (kg)</label><input id="mdMg" type="number" step="0.1" inputmode="decimal"></div>
+      <div><label>Massa magra (kg)</label><input id="mdMm" type="number" step="0.1" inputmode="decimal"></div>
+      <div><label>Água corporal (%)</label><input id="mdAgua" type="number" step="0.1" inputmode="decimal"></div>
+      <div><label>Massa óssea (kg)</label><input id="mdOssea" type="number" step="0.1" inputmode="decimal"></div>
+      <div><label>Gordura visceral</label><input id="mdVisc" type="number" step="0.1" inputmode="decimal"></div>
+      <div><label>Metab. basal (kcal)</label><input id="mdTmb" type="number" step="1" inputmode="numeric"></div>
+      <div><label>Idade metabólica</label><input id="mdIdadeM" type="number" step="1" inputmode="numeric"></div>
+    </div>
+    <button class="botao" id="btnSalvarMedida">Salvar medidas</button>
+    <div class="aviso" id="avisoMedida"></div>
+  </div>
+  <div class="secao-titulo">Registros anteriores</div>
+  <div id="listaMedidas"><div class="nota">Carregando...</div></div>
+</section>
+
+<!-- MINHAS METAS -->
+<section class="tela" id="telaMetas">
+  <div class="saudacao"><h2>Minhas metas</h2><p id="metasJanela"></p></div>
+  <div class="cartao">
+    <div id="metasCampos"><div class="nota">Carregando...</div></div>
+    <button class="botao" id="btnSalvarMetas">Salvar metas</button>
+    <div class="aviso" id="avisoMetas"></div>
+    <p class="nota">Os pontos do desafio consideram sempre o mínimo oficial. Sua meta pessoal alimenta os seus indicadores e os do grupo.</p>
+  </div>
+</section>
 <div class="rodape-saldo" id="rodapeSaldo">
   <div class="num" id="saldoNum">0</div>
   <div class="rotulo">pontos do dia<br><span class="estado" id="estadoSalvar">tudo salvo</span></div>
@@ -422,7 +563,7 @@ async function abrirMeuDia() {
   try {
     const [ds, ts] = await Promise.all([
       api("/rest/v1/desafios?status=eq.ativo&select=id,nome,data_inicio,data_fim&limit=1"),
-      api("/rest/v1/tarefas?ativo=eq.true&select=id,codigo,grupo,descricao,valor_ponto,minimo_padrao&order=grupo.asc,ordem.asc")
+      api("/rest/v1/tarefas?ativo=eq.true&select=id,codigo,grupo,descricao,valor_ponto,minimo_padrao,unidade,quantificavel&order=grupo.asc,ordem.asc")
     ]);
     desafio = ds && ds[0];
     tarefas = ts || [];
@@ -463,8 +604,8 @@ function setMarcados(dia) {
 
 function desenhaTarefas() {
   const marc = setMarcados(diaSelecionado);
-  const bloco = (grupo, titulo, classe) => {
-    const itens = tarefas.filter(t => t.grupo === grupo).map(t => {
+  const bloco = (grupo, titulo, classe, valorZero) => {
+    const itens = tarefas.filter(t => t.grupo === grupo && (valorZero ? t.valor_ponto === 0 : t.valor_ponto !== 0)).map(t => {
       const tema = t.codigo.split(".")[0];
       const marcada = marc.has(t.id);
       return `<div class="tarefa ${marcada ? "marcada" : ""} g${grupo}" data-id="${t.id}" role="button" tabindex="0" aria-pressed="${marcada}">
@@ -477,7 +618,8 @@ function desenhaTarefas() {
   };
   $("listaTarefas").innerHTML =
     bloco(1, "Ganha 1 ponto", "ganha") +
-    bloco(2, "Perde 1 ponto (marque se aconteceu)", "perde");
+    bloco(2, "Perde 1 ponto (marque se aconteceu)", "perde") +
+    bloco(1, "Acompanhamento (não pontua)", "ganha", true);
   document.querySelectorAll(".tarefa").forEach(el => {
     el.addEventListener("click", () => alternaTarefa(el));
     el.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); alternaTarefa(el); } });
@@ -524,7 +666,7 @@ function atualizaSaldo() {
   tarefas.forEach(t => { if (marc.has(t.id)) saldo += t.valor_ponto; });
   $("saldoNum").textContent = (saldo > 0 ? "+" : "") + saldo;
   $("saldoNum").style.color = saldo >= 0 ? "var(--verde-escuro)" : "var(--erro)";
-  const positivas = tarefas.filter(t => t.grupo === 1).length;
+  const positivas = tarefas.filter(t => t.valor_ponto === 1).length;
   if (saldo === positivas && positivas > 0) soltaConfete();
 }
 
@@ -585,6 +727,415 @@ $("btnTrocarSenha").addEventListener("click", async () => {
 });
 $("btnVoltarSenha").addEventListener("click", () => mostraTela("telaMeuDia"));
 
+
+/* ================= FASE 3 ================= */
+const EU_COR = "#2f7d55";
+const CORES_LINHAS = ["#5FC5D6", "#F6A96B", "#F6D06B", "#A8E0C5", "#9b8cf0", "#e58fb1", "#8fb7e5"];
+let graficoEvo = null, graficoVs = null, modoVs = "pontos";
+let cacheSaldos = null, cacheRanking = null;
+let timerTurma = null, ultimaMsgMural = 0;
+const EMOJIS_MURAL = ["💪","🎉","🔥","🍎","💧","🏃","😴","👏","🌱","😅"];
+const EMOJIS_REACAO = ["👏","🔥","💚"];
+
+function diasDoPeriodo() {
+  const fim = hojeISO() < desafio.data_fim ? hojeISO() : desafio.data_fim;
+  const dias = [];
+  const d = new Date(desafio.data_inicio + "T00:00:00");
+  while (dataLocalISO(d) <= fim) { dias.push(dataLocalISO(d)); d.setDate(d.getDate() + 1); }
+  return dias;
+}
+function fmtDia(iso) { return iso.slice(8,10) + "/" + iso.slice(5,7); }
+
+async function garanteBase() {
+  if (!desafio || !tarefas.length) {
+    const [ds, ts] = await Promise.all([
+      api("/rest/v1/desafios?status=eq.ativo&select=id,nome,data_inicio,data_fim&limit=1"),
+      api("/rest/v1/tarefas?ativo=eq.true&select=id,codigo,grupo,descricao,valor_ponto,minimo_padrao,unidade,quantificavel&order=grupo.asc,ordem.asc")
+    ]);
+    desafio = ds && ds[0]; tarefas = ts || [];
+  }
+}
+
+/* ---------------- PROGRESSO ---------------- */
+async function abrirProgresso() {
+  mostraTela("telaProgresso");
+  await garanteBase();
+  if (!desafio) return;
+  const uid = sessao.user.id;
+  try {
+    const [ranking, saldos, meus, indInd, indCol, tarGrupo] = await Promise.all([
+      api("/rest/v1/vw_ranking?select=user_id,nome,apelido,pontos_total"),
+      api("/rest/v1/vw_saldo_diario?select=user_id,data,saldo_dia&order=data.asc"),
+      api("/rest/v1/lancamentos?user_id=eq." + uid + "&select=data,marcado,tarefa_id"),
+      api("/rest/v1/vw_indicadores_quantidade_individual?select=codigo,descricao,unidade,total"),
+      api("/rest/v1/vw_indicadores_quantidade_coletivo?select=codigo,descricao,unidade,total_grupo"),
+      api("/rest/v1/vw_tarefas_cumpridas_coletivo?select=descricao,grupo,cumprimentos,taxa_adesao_pct")
+    ]);
+    cacheRanking = ranking || []; cacheSaldos = saldos || [];
+
+    const posicao = cacheRanking.findIndex(r => r.user_id === uid) + 1;
+    const meu = cacheRanking.find(r => r.user_id === uid);
+    $("pgPontos").textContent = meu ? meu.pontos_total : 0;
+    $("pgPosicao").textContent = posicao > 0 ? posicao + "º" : "-";
+
+    const positivas = tarefas.filter(t => t.grupo === 1 && t.valor_ponto === 1).length;
+    const meusPorDia = {};
+    (meus || []).forEach(l => {
+      if (!l.marcado) return;
+      const t = tarefas.find(x => x.id === l.tarefa_id);
+      if (!t) return;
+      if (!meusPorDia[l.data]) meusPorDia[l.data] = { saldo: 0, pos: 0 };
+      meusPorDia[l.data].saldo += t.valor_ponto;
+      if (t.grupo === 1 && t.valor_ponto === 1) meusPorDia[l.data].pos++;
+    });
+    let perfeitos = 0;
+    Object.values(meusPorDia).forEach(v => { if (v.pos === positivas && v.saldo === positivas) perfeitos++; });
+    $("pgPerfeitos").textContent = perfeitos;
+
+    let streak = 0; const d = new Date();
+    const saldoDe = iso => (meusPorDia[iso] ? meusPorDia[iso].saldo : 0);
+    if (!(saldoDe(dataLocalISO(d)) > 0)) d.setDate(d.getDate() - 1);
+    while (saldoDe(dataLocalISO(d)) > 0) { streak++; d.setDate(d.getDate() - 1); }
+    $("pgStreak").textContent = streak;
+
+    desenhaEvolucao(uid);
+    desenhaVs(uid);
+
+    $("pgIndividuais").innerHTML = (indInd || []).length
+      ? indInd.map(i => `<div class="pilula"><b>${fmtNum(i.total)} ${i.unidade}</b> ${i.descricao}</div>`).join("")
+      : '<span class="nota">Sem dados ainda. Marque tarefas no Meu Dia e defina suas metas.</span>';
+
+    desenhaAdesao(meus || []);
+
+    $("pgColetivos").innerHTML = (indCol || []).length
+      ? indCol.map(i => `<div class="pilula"><b>${fmtNum(i.total_grupo)} ${i.unidade}</b> ${i.descricao} (grupo)</div>`).join("")
+      : '<span class="nota">O grupo ainda não gerou indicadores.</span>';
+
+    const tg = (tarGrupo || []).filter(t => t.cumprimentos > 0);
+    $("pgTarefasGrupo").innerHTML = tg.length
+      ? tg.map(t => `<div class="linha-tarefa"><span>${t.grupo === 2 ? "⚠️ " : ""}${t.descricao}</span><span class="pct">${t.cumprimentos}x</span></div>`).join("")
+      : '<span class="nota">Sem registros do grupo ainda.</span>';
+  } catch (e) {
+    $("pgIndividuais").innerHTML = '<span class="nota">Erro ao carregar: ' + e.message + '</span>';
+  }
+}
+function fmtNum(n) { const v = Number(n); return Number.isInteger(v) ? v : v.toFixed(1).replace(".", ","); }
+
+function acumuladoPorUsuario(dias) {
+  const mapa = {};
+  cacheSaldos.forEach(r => { (mapa[r.user_id] = mapa[r.user_id] || {})[r.data] = r.saldo_dia; });
+  const series = {};
+  Object.keys(mapa).forEach(uid => {
+    let ac = 0;
+    series[uid] = dias.map(dia => { ac += (mapa[uid][dia] || 0); return ac; });
+  });
+  return series;
+}
+
+function desenhaEvolucao(uid) {
+  const dias = diasDoPeriodo();
+  if (!dias.length) return;
+  const series = acumuladoPorUsuario(dias);
+  const ordenados = cacheRanking.slice(0, 5).map(r => r.user_id);
+  const exibir = Array.from(new Set([uid, ...ordenados])).filter(u => series[u]);
+  const datasets = exibir.map((u, idx) => {
+    const p = cacheRanking.find(r => r.user_id === u);
+    const nome = u === uid ? "Você" : ((p && (p.apelido || p.nome)) || "Participante");
+    // micro-deslocamento para separar linhas empatadas (padrao do app Bolao SSGP)
+    const dados = series[u].map(v => v + idx * 0.04);
+    return {
+      label: nome, data: dados,
+      borderColor: u === uid ? EU_COR : CORES_LINHAS[idx % CORES_LINHAS.length],
+      borderWidth: u === uid ? 3 : 2, pointRadius: 0, tension: 0.25
+    };
+  });
+  if (graficoEvo) graficoEvo.destroy();
+  graficoEvo = new Chart($("graficoEvolucao"), {
+    type: "line",
+    data: { labels: dias.map(fmtDia), datasets },
+    options: { animation: false, responsive: true, plugins: { legend: { labels: { boxWidth: 12, font: { size: 10 } } } }, scales: { y: { ticks: { precision: 0 } } } }
+  });
+}
+
+function desenhaVs(uid) {
+  const dias = diasDoPeriodo();
+  if (!dias.length) return;
+  const series = acumuladoPorUsuario(dias);
+  const participantes = cacheRanking.map(r => r.user_id).filter(u => series[u]);
+  let datasets;
+  if (modoVs === "pontos") {
+    const media = dias.map((_, i) => {
+      const vals = participantes.map(u => series[u][i]);
+      return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
+    });
+    datasets = [
+      { label: "Você", data: series[uid] || dias.map(() => 0), borderColor: EU_COR, borderWidth: 3, pointRadius: 0, tension: 0.25 },
+      { label: "Média do grupo", data: media, borderColor: "#F6A96B", borderDash: [6, 4], borderWidth: 2, pointRadius: 0, tension: 0.25 }
+    ];
+  } else {
+    const posicoes = dias.map((_, i) => {
+      const ordem = participantes.slice().sort((a, b) => (series[b][i] - series[a][i]));
+      const p = ordem.indexOf(uid);
+      return p >= 0 ? p + 1 : null;
+    });
+    datasets = [{ label: "Sua posição", data: posicoes, borderColor: EU_COR, borderWidth: 3, pointRadius: 0, tension: 0.25 }];
+  }
+  if (graficoVs) graficoVs.destroy();
+  graficoVs = new Chart($("graficoVs"), {
+    type: "line",
+    data: { labels: dias.map(fmtDia), datasets },
+    options: {
+      animation: false, responsive: true,
+      plugins: { legend: { labels: { boxWidth: 12, font: { size: 10 } } } },
+      scales: { y: modoVs === "posicao" ? { reverse: true, ticks: { precision: 0 } } : { ticks: { precision: 0 } } }
+    }
+  });
+}
+$("vsPontos").addEventListener("click", () => { modoVs = "pontos"; $("vsPontos").classList.add("ativo"); $("vsPosicao").classList.remove("ativo"); desenhaVs(sessao.user.id); });
+$("vsPosicao").addEventListener("click", () => { modoVs = "posicao"; $("vsPosicao").classList.add("ativo"); $("vsPontos").classList.remove("ativo"); desenhaVs(sessao.user.id); });
+
+function desenhaAdesao(meus) {
+  const ini = perfil.data_entrada > desafio.data_inicio ? perfil.data_entrada : desafio.data_inicio;
+  const fim = hojeISO() < desafio.data_fim ? hojeISO() : desafio.data_fim;
+  let possiveis = 0;
+  if (fim >= ini) possiveis = Math.floor((new Date(fim + "T00:00:00") - new Date(ini + "T00:00:00")) / 86400000) + 1;
+  const porTarefa = {};
+  meus.forEach(l => { if (l.marcado) porTarefa[l.tarefa_id] = (porTarefa[l.tarefa_id] || 0) + 1; });
+  const linhas = tarefas.filter(t => t.valor_ponto !== 0).map(t => {
+    const feitos = porTarefa[t.id] || 0;
+    if (t.grupo === 1) {
+      const pct = possiveis > 0 ? Math.round(100 * feitos / possiveis) : 0;
+      return `<div class="linha-tarefa"><span>${t.descricao}</span><span class="pct">${feitos}/${possiveis} (${pct}%)</span></div>`;
+    }
+    const evitou = Math.max(possiveis - feitos, 0);
+    return `<div class="linha-tarefa"><span>Evitou: ${t.descricao.toLowerCase()}</span><span class="pct">${evitou}/${possiveis}</span></div>`;
+  });
+  $("pgAdesao").innerHTML = possiveis > 0 ? linhas.join("") : '<span class="nota">A contagem começa em ' + fmtDia(ini) + '.</span>';
+}
+
+/* ---------------- TURMA: RANKING + MURAL ---------------- */
+async function abrirTurma() {
+  mostraTela("telaTurma");
+  await garanteBase();
+  if (desafio) $("turmaPeriodo").textContent = "Edição de " + fmtDia(desafio.data_inicio) + " a " + fmtDia(desafio.data_fim);
+  await Promise.all([carregaRanking(), carregaMural()]);
+  if (timerTurma) clearInterval(timerTurma);
+  timerTurma = setInterval(() => {
+    if ($("telaTurma").classList.contains("ativa")) { carregaRanking(); carregaMural(); }
+    else { clearInterval(timerTurma); timerTurma = null; }
+  }, 30000);
+}
+
+async function carregaRanking() {
+  try {
+    const linhas = await api("/rest/v1/vw_ranking?select=user_id,nome,apelido,pontos_total");
+    cacheRanking = linhas || [];
+    const uid = sessao.user.id;
+    $("rankLista").innerHTML = cacheRanking.length ? cacheRanking.map((r, i) => {
+      const lider = i === 0 && r.pontos_total > 0;
+      return `<div class="rank-item ${lider ? "lider" : ""} ${r.user_id === uid ? "eu" : ""}">
+        <div class="pos">${lider ? "👑" : (i + 1) + "º"}</div>
+        <div class="nome">${r.apelido || r.nome}${r.user_id === uid ? " (você)" : ""}</div>
+        <div class="pts">${r.pontos_total}</div>
+      </div>`;
+    }).join("") : '<div class="nota">Nenhum participante ainda.</div>';
+  } catch (e) {
+    $("rankLista").innerHTML = '<div class="nota">Erro ao carregar o ranking: ' + e.message + '</div>';
+  }
+}
+$("btnAtualizaRank").addEventListener("click", () => { carregaRanking(); carregaMural(); });
+
+$("muralCab").addEventListener("click", () => $("muralBloco").classList.toggle("mural-aberto"));
+$("muralEmojis").innerHTML = EMOJIS_MURAL.map(e => `<button type="button" data-e="${e}">${e}</button>`).join("");
+$("muralEmojis").addEventListener("click", ev => {
+  const e = ev.target && ev.target.dataset && ev.target.dataset.e;
+  if (!e) return;
+  const inp = $("muralTexto");
+  if ((inp.value + e).length <= 100) { inp.value += e; $("muralChars").textContent = inp.value.length; }
+});
+$("muralTexto").addEventListener("input", () => $("muralChars").textContent = $("muralTexto").value.length);
+
+async function carregaMural() {
+  try {
+    const [msgs, reacs] = await Promise.all([
+      api("/rest/v1/mural?oculto=eq.false&select=id,autor_id,mensagem,tipo,data_hora,perfis(nome,apelido)&order=data_hora.desc&limit=50"),
+      api("/rest/v1/mural_reacoes?select=mural_id,user_id,emoji")
+    ]);
+    const uid = sessao.user.id;
+    const rPor = {};
+    (reacs || []).forEach(r => {
+      const k = r.mural_id + "|" + r.emoji;
+      rPor[k] = rPor[k] || { n: 0, minha: false };
+      rPor[k].n++;
+      if (r.user_id === uid) rPor[k].minha = true;
+    });
+    $("muralCont").textContent = (msgs || []).length;
+    $("muralLista").innerHTML = (msgs || []).length ? msgs.map(m => {
+      const autor = m.tipo === "automatica" ? "🔥 Desafio" : ((m.perfis && (m.perfis.apelido || m.perfis.nome)) || "Participante");
+      const quando = new Date(m.data_hora).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) + " " +
+                     new Date(m.data_hora).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      const podeApagar = m.autor_id === uid || (perfil && perfil.papel === "admin");
+      const reacoes = EMOJIS_REACAO.map(e => {
+        const info = rPor[m.id + "|" + e] || { n: 0, minha: false };
+        return `<button class="reac ${info.minha ? "minha" : ""}" data-mid="${m.id}" data-e="${e}" data-minha="${info.minha ? 1 : 0}">${e}${info.n ? " " + info.n : ""}</button>`;
+      }).join("");
+      return `<div class="bolha">
+        <div class="autor">${autor} <span class="quando">${quando}</span></div>
+        <div class="msg">${escapaHtml(m.mensagem)}</div>
+        <div class="acoes">${reacoes}${podeApagar ? `<button class="apagar" data-del="${m.id}" aria-label="Apagar recado">🗑</button>` : ""}</div>
+      </div>`;
+    }).join("") : '<div class="nota">Nenhum recado ainda. Seja a primeira pessoa a escrever!</div>';
+  } catch (e) {
+    $("muralLista").innerHTML = '<div class="nota">Erro ao carregar o mural: ' + e.message + '</div>';
+  }
+}
+function escapaHtml(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+
+$("muralLista").addEventListener("click", async ev => {
+  const alvo = ev.target;
+  if (alvo.dataset && alvo.dataset.del) {
+    if (!confirm("Apagar este recado?")) return;
+    try { await api("/rest/v1/mural?id=eq." + alvo.dataset.del, { method: "DELETE" }); await carregaMural(); }
+    catch (e) { alert("Não foi possível apagar: " + e.message); }
+    return;
+  }
+  if (alvo.dataset && alvo.dataset.mid) {
+    const { mid, e: emo, minha } = alvo.dataset;
+    try {
+      if (minha === "1") {
+        await api(`/rest/v1/mural_reacoes?mural_id=eq.${mid}&user_id=eq.${sessao.user.id}&emoji=eq.${encodeURIComponent(emo)}`, { method: "DELETE" });
+      } else {
+        await api("/rest/v1/mural_reacoes", { method: "POST", headers: { "Prefer": "return=minimal" },
+          body: JSON.stringify({ mural_id: mid, user_id: sessao.user.id, emoji: emo }) });
+      }
+      await carregaMural();
+    } catch (e2) { alert("Não foi possível reagir: " + e2.message); }
+  }
+});
+
+$("muralEnviar").addEventListener("click", async () => {
+  limpaAviso("avisoMural");
+  const txt = $("muralTexto").value.trim();
+  if (!txt) return;
+  const agora = Date.now();
+  if (agora - ultimaMsgMural < 60000) {
+    const falta = Math.ceil((60000 - (agora - ultimaMsgMural)) / 1000);
+    aviso("avisoMural", "erro", "Aguarde " + falta + "s para enviar outro recado.");
+    return;
+  }
+  const btn = $("muralEnviar"); btn.disabled = true;
+  try {
+    await api("/rest/v1/mural", { method: "POST", headers: { "Prefer": "return=minimal" },
+      body: JSON.stringify({ autor_id: sessao.user.id, mensagem: txt }) });
+    ultimaMsgMural = agora;
+    $("muralTexto").value = ""; $("muralChars").textContent = "0";
+    await carregaMural();
+  } catch (e) {
+    aviso("avisoMural", "erro", "Não foi possível enviar: " + e.message);
+  } finally { btn.disabled = false; }
+});
+
+/* ---------------- MINHAS MEDIDAS ---------------- */
+const CAMPOS_MEDIDA = [
+  ["mdPeso","peso_kg"],["mdImc","imc"],["mdGord","gordura_pct"],["mdMg","massa_gordura_kg"],
+  ["mdMm","massa_magra_kg"],["mdAgua","agua_corporal_pct"],["mdOssea","massa_ossea_kg"],
+  ["mdVisc","gordura_visceral"],["mdTmb","tmb_kcal"],["mdIdadeM","idade_metabolica"]
+];
+async function abrirMedidas() {
+  mostraTela("telaMedidas");
+  $("mdData").value = hojeISO();
+  await listaMedidas();
+}
+async function listaMedidas() {
+  try {
+    const linhas = await api("/rest/v1/medidas_pessoais?user_id=eq." + sessao.user.id + "&select=id,data,peso_kg,gordura_pct,massa_magra_kg&order=data.desc&limit=12");
+    $("listaMedidas").innerHTML = (linhas || []).length ? linhas.map(m =>
+      `<div class="medida-linha"><span>${fmtDia(m.data)}</span>
+       <span>${m.peso_kg != null ? fmtNum(m.peso_kg) + " kg" : ""} ${m.gordura_pct != null ? "| " + fmtNum(m.gordura_pct) + "% gord." : ""} ${m.massa_magra_kg != null ? "| " + fmtNum(m.massa_magra_kg) + " kg magra" : ""}</span>
+       <button class="apagar" data-delm="${m.id}" aria-label="Apagar registro">🗑</button></div>`
+    ).join("") : '<div class="nota">Nenhum registro ainda.</div>';
+  } catch (e) {
+    $("listaMedidas").innerHTML = '<div class="nota">Erro: ' + e.message + '</div>';
+  }
+}
+$("listaMedidas").addEventListener("click", async ev => {
+  const id = ev.target && ev.target.dataset && ev.target.dataset.delm;
+  if (!id) return;
+  if (!confirm("Apagar este registro de medidas?")) return;
+  try { await api("/rest/v1/medidas_pessoais?id=eq." + id, { method: "DELETE" }); await listaMedidas(); }
+  catch (e) { alert("Não foi possível apagar: " + e.message); }
+});
+$("btnSalvarMedida").addEventListener("click", async () => {
+  limpaAviso("avisoMedida");
+  const corpo = { user_id: sessao.user.id, data: $("mdData").value || hojeISO() };
+  let algum = false;
+  CAMPOS_MEDIDA.forEach(([elId, col]) => {
+    const v = $(elId).value;
+    if (v !== "") { corpo[col] = Number(v); algum = true; }
+  });
+  if (!algum) { aviso("avisoMedida", "erro", "Preencha ao menos um campo."); return; }
+  const btn = $("btnSalvarMedida"); btn.disabled = true;
+  try {
+    await api("/rest/v1/medidas_pessoais", { method: "POST", headers: { "Prefer": "return=minimal" }, body: JSON.stringify(corpo) });
+    aviso("avisoMedida", "ok", "Medidas salvas. Só você tem acesso a elas.");
+    CAMPOS_MEDIDA.forEach(([elId]) => $(elId).value = "");
+    await listaMedidas();
+  } catch (e) {
+    aviso("avisoMedida", "erro", "Não foi possível salvar: " + e.message);
+  } finally { btn.disabled = false; }
+});
+
+/* ---------------- MINHAS METAS ---------------- */
+let metasAtuais = {};
+function janelaMetasAberta() {
+  if (!perfil || !perfil.data_entrada) return false;
+  const dias = Math.floor((new Date(hojeISO() + "T00:00:00") - new Date(perfil.data_entrada + "T00:00:00")) / 86400000);
+  return dias <= 5;
+}
+async function abrirMetas() {
+  mostraTela("telaMetas");
+  await garanteBase();
+  const aberta = janelaMetasAberta();
+  $("metasJanela").textContent = aberta
+    ? "Você pode ajustar suas metas até 5 dias depois da sua entrada."
+    : "A janela de 5 dias para ajustes já encerrou. Suas metas estão fixadas.";
+  try {
+    const minhas = await api("/rest/v1/metas_personalizadas?user_id=eq." + sessao.user.id + "&select=tarefa_id,valor_meta,unidade");
+    metasAtuais = {};
+    (minhas || []).forEach(m => metasAtuais[m.tarefa_id] = m.valor_meta);
+    const quant = tarefas.filter(t => t.quantificavel);
+    $("metasCampos").innerHTML = quant.map(t =>
+      `<label>${t.descricao} (${t.unidade})${t.minimo_padrao ? " · mínimo oficial: " + t.minimo_padrao : ""}</label>
+       <input type="number" step="0.5" inputmode="decimal" data-meta="${t.id}" data-uni="${t.unidade}"
+              value="${metasAtuais[t.id] != null ? metasAtuais[t.id] : ""}"
+              placeholder="${t.minimo_padrao || "sua meta"}" ${aberta ? "" : "disabled"}>`
+    ).join("");
+    $("btnSalvarMetas").style.display = aberta ? "" : "none";
+  } catch (e) {
+    $("metasCampos").innerHTML = '<div class="nota">Erro: ' + e.message + '</div>';
+  }
+}
+$("btnSalvarMetas").addEventListener("click", async () => {
+  limpaAviso("avisoMetas");
+  const inputs = Array.from(document.querySelectorAll("[data-meta]"));
+  const btn = $("btnSalvarMetas"); btn.disabled = true;
+  try {
+    for (const inp of inputs) {
+      const v = inp.value;
+      if (v === "") continue;
+      await api("/rest/v1/metas_personalizadas?on_conflict=user_id,tarefa_id", {
+        method: "POST",
+        headers: { "Prefer": "resolution=merge-duplicates,return=minimal" },
+        body: JSON.stringify({ user_id: sessao.user.id, tarefa_id: inp.dataset.meta, valor_meta: Number(v), unidade: inp.dataset.uni })
+      });
+    }
+    aviso("avisoMetas", "ok", "Metas salvas.");
+  } catch (e) {
+    const m = /janela|5 dias/i.test(e.message) ? "A janela de 5 dias para ajustes já encerrou." : e.message;
+    aviso("avisoMetas", "erro", "Não foi possível salvar: " + m);
+  } finally { btn.disabled = false; }
+});
+
 /* ---------------- drawer (padrao do app Bolao SSGP) ---------------- */
 function fechaMenu() { document.body.classList.remove("menu-aberto"); }
 $("btnMenu").addEventListener("click", () => document.body.classList.toggle("menu-aberto"));
@@ -596,6 +1147,10 @@ $("drawer").addEventListener("click", ev => {
   if (!acao) return;
   fechaMenu();
   if (acao === "meudia") mostraTela("telaMeuDia");
+  if (acao === "progresso") abrirProgresso();
+  if (acao === "turma") abrirTurma();
+  if (acao === "medidas") abrirMedidas();
+  if (acao === "metas") abrirMetas();
   if (acao === "senha") { limpaAviso("avisoSenha"); mostraTela("telaSenha"); }
   if (acao === "sair") { apagaSessao(); mostraTela("telaLogin"); }
 });
