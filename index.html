@@ -259,6 +259,8 @@
   <button data-acao="turma">Ranking e Mural</button>
   <button data-acao="medidas">Minhas Medidas</button>
   <button data-acao="metas">Minhas Metas</button>
+  <button data-acao="lembretes">Lembretes</button>
+  <button data-acao="admin" id="itemAdmin" style="display:none">Admin</button>
   <div class="breve">Conta</div>
   <button data-acao="senha">Trocar minha senha</button>
   <button data-acao="sair">Sair</button>
@@ -414,6 +416,43 @@
     <p class="nota">Os pontos do desafio consideram sempre o mínimo oficial. Sua meta pessoal alimenta os seus indicadores e os do grupo.</p>
   </div>
 </section>
+
+<!-- LEMBRETES -->
+<section class="tela" id="telaLembretes">
+  <div class="saudacao"><h2>Lembretes</h2><p>Receba um aviso no celular para não esquecer de lançar o dia.</p></div>
+  <div class="cartao">
+    <div id="pushEstado" class="nota">Verificando este aparelho...</div>
+    <button class="botao" id="btnAtivarPush">Ativar notificações neste aparelho</button>
+    <div class="aviso" id="avisoPush"></div>
+    <p class="nota">No iPhone, as notificações só funcionam com o app instalado na tela de início (Safari, botão Compartilhar, Adicionar à Tela de Início) e no iOS 16.4 ou mais novo. A entrega pode atrasar em alguns aparelhos Android por economia de bateria.</p>
+  </div>
+  <div class="secao-titulo">Meus horários</div>
+  <div id="listaLembretes"><div class="nota">Carregando...</div></div>
+  <div class="cartao">
+    <label for="lbHora">Novo lembrete</label>
+    <input id="lbHora" type="time" value="20:00">
+    <div class="emoji-fila" id="lbDias" style="margin-top:10px"></div>
+    <button class="botao" id="btnAddLembrete">Adicionar lembrete</button>
+    <div class="aviso" id="avisoLembrete"></div>
+  </div>
+</section>
+
+<!-- ADMIN -->
+<section class="tela" id="telaAdmin">
+  <div class="saudacao"><h2>Admin</h2><p>Cadastro de participantes e moderação do mural.</p></div>
+  <div class="cartao">
+    <h3 style="color:var(--verde-escuro);margin-top:0">Cadastrar participante</h3>
+    <label for="adNome">Nome</label>
+    <input id="adNome" placeholder="Ana Maria">
+    <label for="adSenha">Senha inicial</label>
+    <input id="adSenha" value="trocar123">
+    <button class="botao" id="btnAdCadastrar">Cadastrar</button>
+    <div class="aviso" id="avisoAdCad"></div>
+  </div>
+  <div class="secao-titulo">Moderação do mural</div>
+  <div id="adMural"><div class="nota">Carregando...</div></div>
+</section>
+
 <div class="rodape-saldo" id="rodapeSaldo">
   <div class="num" id="saldoNum">0</div>
   <div class="rotulo">pontos do dia<br><span class="estado" id="estadoSalvar">tudo salvo</span></div>
@@ -425,8 +464,9 @@
    CONFIGURACAO: preencha estas duas linhas com os dados do seu projeto
    (painel do Supabase, em Settings > API)
    ===================================================================== */
-const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";      // ex.: https://xxxxxxx.supabase.co
-const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM"; // chave anon public
+const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";
+const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM";
+const VAPID_PUBLIC = "BFnNxgNHnFaACuuX0uGSazJ_y4UcdldUESzyAa_v1Tzmx_CBSTbQuJSaQ-G599KPKxIWgvGKOBhMtrUk-yH4AaU"; // chave publica de notificacoes (ja preenchida)
 /* ===================================================================== */
 
 const ICONES_TEMA = { "1": "🌙", "2": "🍎", "3": "💧", "4": "🏃", "5": "📵" };
@@ -531,6 +571,7 @@ async function entrar() {
   perfil = linhas && linhas[0];
   if (!perfil) { aviso("avisoLogin", "erro", "Seu perfil não foi encontrado. Fale com o organizador."); apagaSessao(); return; }
   $("drawerNome").textContent = perfil.apelido || perfil.nome;
+  $("itemAdmin").style.display = perfil.papel === "admin" ? "" : "none";
   if (!perfil.consentimento_lgpd) { mostraTela("telaConsent"); return; }
   await abrirMeuDia();
 }
@@ -1136,6 +1177,205 @@ $("btnSalvarMetas").addEventListener("click", async () => {
   } finally { btn.disabled = false; }
 });
 
+
+/* ================= FASE 4 ================= */
+const DIAS_ROTULO = ["D","S","T","Q","Q","S","S"];
+
+function b64urlParaUint8(base64) {
+  const pad = "=".repeat((4 - base64.length % 4) % 4);
+  const b = (base64 + pad).replace(/-/g, "+").replace(/_/g, "/");
+  const raw = atob(b);
+  const arr = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+function abParaB64url(buf) {
+  const bytes = new Uint8Array(buf);
+  let bin = "";
+  bytes.forEach(x => bin += String.fromCharCode(x));
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/* ---------------- LEMBRETES ---------------- */
+async function abrirLembretes() {
+  mostraTela("telaLembretes");
+  montaDiasNovoLembrete();
+  await Promise.all([estadoPush(), listaLembretes()]);
+}
+
+async function estadoPush() {
+  const el = $("pushEstado"), btn = $("btnAtivarPush");
+  if (!("serviceWorker" in navigator) || !("PushManager" in window) || !("Notification" in window)) {
+    el.textContent = "Este navegador não suporta notificações push. No iPhone, instale o app na tela de início e abra por lá.";
+    btn.style.display = "none";
+    return;
+  }
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    const sub = await reg.pushManager.getSubscription();
+    if (sub && Notification.permission === "granted") {
+      el.textContent = "✅ Notificações ativas neste aparelho.";
+      btn.textContent = "Reativar neste aparelho";
+    } else if (Notification.permission === "denied") {
+      el.textContent = "As notificações foram bloqueadas neste navegador. Para reativar, libere nas configurações do site.";
+    } else {
+      el.textContent = "Notificações ainda não ativadas neste aparelho.";
+    }
+  } catch { el.textContent = "Não foi possível verificar o estado das notificações."; }
+}
+
+$("btnAtivarPush").addEventListener("click", async () => {
+  limpaAviso("avisoPush");
+  const btn = $("btnAtivarPush"); btn.disabled = true;
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm !== "granted") { aviso("avisoPush", "erro", "Permissão de notificação não concedida."); return; }
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) {
+      sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: b64urlParaUint8(VAPID_PUBLIC)
+      });
+    }
+    await api("/rest/v1/push_assinaturas?on_conflict=endpoint", {
+      method: "POST",
+      headers: { "Prefer": "resolution=merge-duplicates,return=minimal" },
+      body: JSON.stringify({
+        user_id: sessao.user.id,
+        endpoint: sub.endpoint,
+        p256dh: abParaB64url(sub.getKey("p256dh")),
+        auth: abParaB64url(sub.getKey("auth"))
+      })
+    });
+    aviso("avisoPush", "ok", "Pronto! Este aparelho vai receber seus lembretes.");
+    await estadoPush();
+  } catch (e) {
+    aviso("avisoPush", "erro", "Não foi possível ativar: " + e.message);
+  } finally { btn.disabled = false; }
+});
+
+let diasNovo = new Set([0,1,2,3,4,5,6]);
+function montaDiasNovoLembrete() {
+  $("lbDias").innerHTML = DIAS_ROTULO.map((r, i) =>
+    `<button type="button" data-dia="${i}" style="${diasNovo.has(i) ? "background:var(--menta);border-color:var(--verde);" : ""}">${r}</button>`
+  ).join("");
+}
+$("lbDias").addEventListener("click", ev => {
+  const d = ev.target && ev.target.dataset && ev.target.dataset.dia;
+  if (d === undefined) return;
+  const n = Number(d);
+  if (diasNovo.has(n)) diasNovo.delete(n); else diasNovo.add(n);
+  montaDiasNovoLembrete();
+});
+
+async function listaLembretes() {
+  try {
+    const linhas = await api("/rest/v1/lembretes?user_id=eq." + sessao.user.id + "&select=id,horario,dias_semana,ativo&order=horario.asc");
+    $("listaLembretes").innerHTML = (linhas || []).length ? linhas.map(l => {
+      const dias = (l.dias_semana || []).length === 7 ? "todos os dias" : (l.dias_semana || []).map(d => DIAS_ROTULO[d]).join(" ");
+      return `<div class="medida-linha">
+        <span><b>${String(l.horario).slice(0,5)}</b> · ${dias}</span>
+        <span>
+          <button class="reac ${l.ativo ? "minha" : ""}" data-tgl="${l.id}" data-atv="${l.ativo ? 1 : 0}">${l.ativo ? "ativo" : "pausado"}</button>
+          <button class="apagar" data-dell="${l.id}" aria-label="Apagar lembrete">🗑</button>
+        </span>
+      </div>`;
+    }).join("") : '<div class="nota">Nenhum lembrete ainda. Adicione um abaixo (sugestão: 20:00).</div>';
+  } catch (e) {
+    $("listaLembretes").innerHTML = '<div class="nota">Erro: ' + e.message + '</div>';
+  }
+}
+$("listaLembretes").addEventListener("click", async ev => {
+  const t = ev.target;
+  if (t.dataset && t.dataset.dell) {
+    if (!confirm("Apagar este lembrete?")) return;
+    try { await api("/rest/v1/lembretes?id=eq." + t.dataset.dell, { method: "DELETE" }); await listaLembretes(); }
+    catch (e) { alert("Não foi possível apagar: " + e.message); }
+    return;
+  }
+  if (t.dataset && t.dataset.tgl) {
+    try {
+      await api("/rest/v1/lembretes?id=eq." + t.dataset.tgl, {
+        method: "PATCH", headers: { "Prefer": "return=minimal" },
+        body: JSON.stringify({ ativo: t.dataset.atv !== "1" })
+      });
+      await listaLembretes();
+    } catch (e) { alert("Não foi possível alterar: " + e.message); }
+  }
+});
+$("btnAddLembrete").addEventListener("click", async () => {
+  limpaAviso("avisoLembrete");
+  const hora = $("lbHora").value;
+  if (!hora) { aviso("avisoLembrete", "erro", "Escolha um horário."); return; }
+  if (!diasNovo.size) { aviso("avisoLembrete", "erro", "Escolha ao menos um dia da semana."); return; }
+  const btn = $("btnAddLembrete"); btn.disabled = true;
+  try {
+    await api("/rest/v1/lembretes", {
+      method: "POST", headers: { "Prefer": "return=minimal" },
+      body: JSON.stringify({ user_id: sessao.user.id, horario: hora, dias_semana: Array.from(diasNovo).sort() })
+    });
+    aviso("avisoLembrete", "ok", "Lembrete adicionado.");
+    await listaLembretes();
+  } catch (e) {
+    aviso("avisoLembrete", "erro", "Não foi possível adicionar: " + e.message);
+  } finally { btn.disabled = false; }
+});
+
+/* ---------------- ADMIN ---------------- */
+async function abrirAdmin() {
+  if (!perfil || perfil.papel !== "admin") return;
+  mostraTela("telaAdmin");
+  await adCarregaMural();
+}
+$("btnAdCadastrar").addEventListener("click", async () => {
+  limpaAviso("avisoAdCad");
+  const nome = $("adNome").value.trim();
+  const senha = $("adSenha").value;
+  if (!nome || senha.length < 6) { aviso("avisoAdCad", "erro", "Preencha o nome e uma senha de ao menos 6 caracteres."); return; }
+  const btn = $("btnAdCadastrar"); btn.disabled = true;
+  try {
+    const r = await api("/functions/v1/criar-participante", {
+      method: "POST",
+      body: JSON.stringify({ username: nome, senha, nome })
+    });
+    aviso("avisoAdCad", "ok", "Cadastro feito.\nUsuário: " + r.username + "\nSenha: " + senha + "\nPasse esses dados para a pessoa.");
+    $("adNome").value = "";
+  } catch (e) {
+    const m = /ja existe/i.test(e.message) ? e.message + " (tente uma variação, ex.: nome2)" : e.message;
+    aviso("avisoAdCad", "erro", "Não deu certo: " + m);
+  } finally { btn.disabled = false; }
+});
+
+async function adCarregaMural() {
+  try {
+    const msgs = await api("/rest/v1/mural?select=id,mensagem,tipo,oculto,data_hora,perfis(nome,apelido)&order=data_hora.desc&limit=100");
+    $("adMural").innerHTML = (msgs || []).length ? msgs.map(m => {
+      const autor = m.tipo === "automatica" ? "🔥 Desafio" : ((m.perfis && (m.perfis.apelido || m.perfis.nome)) || "Participante");
+      return `<div class="bolha" style="${m.oculto ? "opacity:0.55" : ""}">
+        <div class="autor">${autor} ${m.oculto ? '<span class="quando">(oculta)</span>' : ""}</div>
+        <div class="msg">${escapaHtml(m.mensagem)}</div>
+        <div class="acoes">
+          <button class="reac" data-mod="${m.id}" data-oc="${m.oculto ? 1 : 0}">${m.oculto ? "Reexibir" : "Ocultar"}</button>
+        </div>
+      </div>`;
+    }).join("") : '<div class="nota">O mural está vazio.</div>';
+  } catch (e) {
+    $("adMural").innerHTML = '<div class="nota">Erro: ' + e.message + '</div>';
+  }
+}
+$("adMural").addEventListener("click", async ev => {
+  const t = ev.target;
+  if (!(t.dataset && t.dataset.mod)) return;
+  try {
+    await api("/rest/v1/mural?id=eq." + t.dataset.mod, {
+      method: "PATCH", headers: { "Prefer": "return=minimal" },
+      body: JSON.stringify({ oculto: t.dataset.oc !== "1" })
+    });
+    await adCarregaMural();
+  } catch (e) { alert("Não foi possível moderar: " + e.message); }
+});
+
 /* ---------------- drawer (padrao do app Bolao SSGP) ---------------- */
 function fechaMenu() { document.body.classList.remove("menu-aberto"); }
 $("btnMenu").addEventListener("click", () => document.body.classList.toggle("menu-aberto"));
@@ -1151,6 +1391,8 @@ $("drawer").addEventListener("click", ev => {
   if (acao === "turma") abrirTurma();
   if (acao === "medidas") abrirMedidas();
   if (acao === "metas") abrirMetas();
+  if (acao === "lembretes") abrirLembretes();
+  if (acao === "admin") abrirAdmin();
   if (acao === "senha") { limpaAviso("avisoSenha"); mostraTela("telaSenha"); }
   if (acao === "sair") { apagaSessao(); mostraTela("telaLogin"); }
 });

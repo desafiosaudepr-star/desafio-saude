@@ -3,7 +3,7 @@
 // (a casca do app). Dados da API nunca sao cacheados, para o conteudo
 // sempre refletir o estado real do banco.
 
-const CACHE = "mais-saude-v2";
+const CACHE = "mais-saude-v3";
 const ARQUIVOS = [
   "./",
   "./index.html",
@@ -33,5 +33,25 @@ self.addEventListener("fetch", (ev) => {
   if (url.origin !== self.location.origin) return;
   ev.respondWith(
     caches.match(ev.request).then((hit) => hit || fetch(ev.request))
+  );
+});
+
+self.addEventListener("push", (ev) => {
+  let d = { title: "Mais Saúde na Rotina", body: "" };
+  try { d = ev.data.json(); } catch {}
+  ev.waitUntil(self.registration.showNotification(d.title || "Mais Saúde na Rotina", {
+    body: d.body || "",
+    icon: "icons/icone-192.png",
+    badge: "icons/icone-192.png"
+  }));
+});
+
+self.addEventListener("notificationclick", (ev) => {
+  ev.notification.close();
+  ev.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((janelas) => {
+      for (const j of janelas) { if ("focus" in j) return j.focus(); }
+      return clients.openWindow("./");
+    })
   );
 });
