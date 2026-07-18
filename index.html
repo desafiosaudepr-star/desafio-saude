@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#4CAF7D">
-<title>Mais Saúde na Rotina</title>
+<title>Desafio Mais Saúde</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icone-192.png">
 <link rel="apple-touch-icon" href="icons/icone-192.png">
@@ -240,6 +240,55 @@
   .grade-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12px; }
   .medida-linha { display: flex; justify-content: space-between; gap: 8px; font-size: 0.83rem; padding: 8px 4px; border-bottom: 1px dashed rgba(76,175,125,0.25); align-items: center; }
   .nota { font-size: 0.8rem; color: var(--texto-suave); margin-top: 8px; }
+
+  /* padrao mobile de tamanhos, linhagem do app Bolao SSGP:
+     titulos em fonte de display, corpo Inter, escala compacta */
+  :root {
+    --fs-display: 1.55rem;  /* titulo de tela */
+    --fs-secao: 1.02rem;    /* titulos de secao */
+    --fs-corpo: 0.92rem;    /* texto corrente */
+    --fs-peq: 0.78rem;      /* apoios e legendas */
+  }
+  html { font-size: 16px; }
+  .saudacao h2 { font-size: var(--fs-display); }
+  .secao-titulo, .cartao h2, .cartao h3 { font-size: var(--fs-secao); }
+  .tarefa .txt, .rank-item .nome, .bolha .msg, p, li, label, input, .drawer button { font-size: var(--fs-corpo); }
+  .nota, .ajuda, .tarefa .txt .min, .bolha .autor, .contador-car, .mini-card .rot { font-size: var(--fs-peq); }
+  .subtitulo-topo { display: block; font-family: 'Inter'; font-weight: 500; font-size: 0.62rem; color: var(--texto-suave); letter-spacing: 0.04em; margin-top: -2px; }
+  .sub-hero { font-family: 'Nunito'; font-weight: 700; color: var(--agua); margin: -2px 0 2px !important; font-size: 0.95rem !important; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* tema escuro */
+  body.tema-escuro {
+    --fundo: #101815;
+    --texto: #E6EFE9;
+    --texto-suave: #9db3a7;
+    --vidro: rgba(22, 34, 28, 0.78);
+    background:
+      radial-gradient(1000px 500px at 110% -10%, rgba(95,197,214,0.10), transparent 60%),
+      radial-gradient(900px 480px at -10% 0%, rgba(76,175,125,0.14), transparent 55%),
+      var(--fundo);
+  }
+  body.tema-escuro input, body.tema-escuro .seletor-dia button:not(.ativo),
+  body.tema-escuro .seletor-modo button:not(.ativo), body.tema-escuro .bolha .reac:not(.minha),
+  body.tema-escuro .emoji-fila button { background: #1b2a23; color: var(--texto); border-color: #2e4437; }
+  body.tema-escuro .rank-item.lider { background: rgba(246,208,107,0.14); }
+  body.tema-escuro .tarefa.marcada.g1 { background: rgba(76,175,125,0.22); }
+  body.tema-escuro .tarefa.marcada.g2 { background: rgba(246,169,107,0.16); }
+  body.tema-escuro .faixa-info { background: rgba(246,208,107,0.12); }
+
+  /* abas do consentimento e listas do admin */
+  .abas { display: flex; gap: 8px; margin-bottom: 12px; }
+  .abas button { flex: 1; padding: 9px; border-radius: 12px; border: 1.5px solid rgba(76,175,125,0.35); background: transparent; font-family: 'Nunito'; font-weight: 800; font-size: var(--fs-corpo); color: var(--verde-escuro); cursor: pointer; }
+  .abas button.ativo { background: var(--verde); border-color: var(--verde); color: #fff; }
+  .aba-painel { display: none; }
+  .aba-painel.ativo { display: block; }
+  .regulamento h4 { color: var(--verde-escuro); margin: 14px 0 4px; font-size: var(--fs-secao); }
+  .regulamento p, .regulamento li { font-size: var(--fs-corpo); }
+  .part-linha { display: flex; align-items: center; gap: 8px; background: var(--vidro); border: 1px solid rgba(76,175,125,0.2); border-radius: 12px; padding: 9px 12px; margin-bottom: 7px; }
+  .part-linha .pn { flex: 1; font-size: var(--fs-corpo); }
+  .part-linha .pn small { display: block; color: var(--texto-suave); font-size: var(--fs-peq); }
+  .part-linha button { border: 1px solid rgba(76,175,125,0.35); background: transparent; border-radius: 10px; padding: 6px 8px; cursor: pointer; font-size: 0.9rem; }
+  .link-publico { display: block; text-align: center; margin-top: 14px; color: var(--verde-escuro); font-weight: 600; font-size: var(--fs-corpo); text-decoration: underline; cursor: pointer; background: none; border: none; width: 100%; }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -247,7 +296,7 @@
 
 <header id="topo" style="display:none">
   <img src="icons/icone-192.png" alt="">
-  <div class="titulo">Mais Saúde na Rotina</div>
+  <div class="titulo">Desafio Mais Saúde<span class="subtitulo-topo">na Rotina Diária</span></div>
   <button class="btn-menu" id="btnMenu" aria-label="Abrir menu"><span></span><span></span><span></span></button>
 </header>
 
@@ -260,6 +309,9 @@
   <button data-acao="medidas">Minhas Medidas</button>
   <button data-acao="metas">Minhas Metas</button>
   <button data-acao="lembretes">Lembretes</button>
+  <button data-acao="regulamento">Regulamento</button>
+  <button data-acao="compartilhar">Compartilhar no WhatsApp</button>
+  <button data-acao="tema">Tema escuro / claro</button>
   <button data-acao="admin" id="itemAdmin" style="display:none">Admin</button>
   <div class="breve">Conta</div>
   <button data-acao="senha">Trocar minha senha</button>
@@ -269,8 +321,9 @@
 <!-- LOGIN -->
 <section class="tela ativa" id="telaLogin">
   <div class="hero">
-    <img src="icons/icone-192.png" alt="Mais Saúde na Rotina">
-    <h1>Mais Saúde na Rotina</h1>
+    <img src="icons/icone-192.png" alt="Desafio Mais Saúde">
+    <h1>Desafio Mais Saúde</h1>
+    <p class="sub-hero">na Rotina Diária</p>
     <p>Pequenos hábitos, grandes vitórias.</p>
   </div>
   <div class="cartao">
@@ -280,21 +333,30 @@
     <input id="loginSenha" type="password" autocomplete="current-password" placeholder="sua senha">
     <button class="botao" id="btnEntrar">Entrar</button>
     <div class="aviso" id="avisoLogin"></div>
+    <button class="link-publico" id="btnVerPublico">Ver o desafio sem entrar (tarefas e ranking)</button>
   </div>
 </section>
 
 <!-- CONSENTIMENTO LGPD -->
 <section class="tela" id="telaConsent">
   <div class="cartao">
-    <h2>Antes de começar</h2>
-    <p style="font-size:0.93rem">O desafio registra hábitos de saúde, que a lei brasileira (LGPD) trata como dados sensíveis. Por isso pedimos seu consentimento claro:</p>
-    <ul>
-      <li><strong>O que será registrado:</strong> suas marcações diárias das tarefas do desafio e, se você quiser, suas metas pessoais e medidas corporais.</li>
-      <li><strong>Para que:</strong> calcular seus pontos, montar o ranking e os indicadores do grupo.</li>
-      <li><strong>Quem vê o quê:</strong> o detalhe das suas tarefas e as suas medidas são só seus; os demais veem apenas seu nome e sua pontuação total.</li>
-      <li><strong>Você pode sair quando quiser</strong> e pedir a exclusão dos seus dados ao organizador.</li>
-    </ul>
-    <button class="botao" id="btnAceitar">Li e concordo, quero participar</button>
+    <h2 style="margin-top:0;color:var(--verde-escuro)">Bem-vindo(a) ao Desafio Mais Saúde!</h2>
+    <div class="abas">
+      <button id="abaDados" class="ativo">Uso dos dados</button>
+      <button id="abaRegul">Regulamento</button>
+    </div>
+    <div class="aba-painel ativo" id="painelDados">
+      <p>Que bom ter você na turma! Antes de começar, queremos ser transparentes sobre os seus dados. Como o desafio acompanha hábitos de saúde, a lei brasileira (LGPD) os trata como dados sensíveis, e o seu consentimento claro é indispensável.</p>
+      <ul>
+        <li><strong>O que registramos:</strong> suas marcações diárias das tarefas e, apenas se você quiser, suas metas pessoais e medidas corporais.</li>
+        <li><strong>Para que usamos:</strong> calcular seus pontos, montar o ranking e os indicadores coletivos do grupo (sempre sem nomes).</li>
+        <li><strong>Quem vê o quê:</strong> o detalhe das suas tarefas e as suas medidas são só seus, nem o organizador acessa as medidas; os demais participantes veem apenas seu nome e sua pontuação.</li>
+        <li><strong>Seus direitos:</strong> você pode sair quando quiser e pedir ao organizador a exclusão de tudo o que é seu.</li>
+      </ul>
+    </div>
+    <div class="aba-painel regulamento" id="painelRegul"></div>
+    <button class="botao" id="btnAceitar">Concordo com tudo, quero participar</button>
+    <button class="botao secundario" id="btnNaoConcordo">Não concordo</button>
     <div class="aviso" id="avisoConsent"></div>
   </div>
 </section>
@@ -431,6 +493,8 @@
   <div class="cartao">
     <label for="lbHora">Novo lembrete</label>
     <input id="lbHora" type="time" value="20:00">
+    <label for="lbMsg">Mensagem do aviso (opcional)</label>
+    <input id="lbMsg" maxlength="90" placeholder="Ex.: Bora lançar o dia! 🌱">
     <div class="emoji-fila" id="lbDias" style="margin-top:10px"></div>
     <button class="botao" id="btnAddLembrete">Adicionar lembrete</button>
     <div class="aviso" id="avisoLembrete"></div>
@@ -442,15 +506,41 @@
   <div class="saudacao"><h2>Admin</h2><p>Cadastro de participantes e moderação do mural.</p></div>
   <div class="cartao">
     <h3 style="color:var(--verde-escuro);margin-top:0">Cadastrar participante</h3>
-    <label for="adNome">Nome</label>
+    <label for="adNome">Nome (como aparece no ranking)</label>
     <input id="adNome" placeholder="Ana Maria">
+    <label for="adUsuario">Usuário (para o login)</label>
+    <input id="adUsuario" placeholder="anamaria">
     <label for="adSenha">Senha inicial</label>
     <input id="adSenha" value="trocar123">
     <button class="botao" id="btnAdCadastrar">Cadastrar</button>
     <div class="aviso" id="avisoAdCad"></div>
   </div>
+  <div class="secao-titulo">Participantes</div>
+  <div id="adLista"><div class="nota">Carregando...</div></div>
+  <div class="cartao">
+    <h3 style="color:var(--verde-escuro);margin-top:0">Exportar</h3>
+    <button class="botao secundario" id="btnExportarXlsx">Baixar Excel (ranking e lançamentos)</button>
+    <div class="aviso" id="avisoExport"></div>
+  </div>
   <div class="secao-titulo">Moderação do mural</div>
   <div id="adMural"><div class="nota">Carregando...</div></div>
+</section>
+
+
+<!-- VISUALIZACAO PUBLICA (sem login) -->
+<section class="tela" id="telaPublica">
+  <div class="saudacao"><h2>Desafio Mais Saúde</h2><p>na Rotina Diária · visualização pública</p></div>
+  <div class="secao-titulo">Ranking</div>
+  <div id="pubRank"><div class="nota">Carregando...</div></div>
+  <div class="secao-titulo">As tarefas do desafio</div>
+  <div id="pubTarefas"><div class="nota">Carregando...</div></div>
+  <button class="botao secundario" id="btnPubVoltar">Voltar para o login</button>
+</section>
+
+<!-- REGULAMENTO -->
+<section class="tela" id="telaRegulamento">
+  <div class="saudacao"><h2>Regulamento</h2><p>versão simplificada</p></div>
+  <div class="cartao regulamento" id="regulamentoCorpo"></div>
 </section>
 
 <div class="rodape-saldo" id="rodapeSaldo">
@@ -467,6 +557,7 @@
 const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM";
 const FUNC_CADASTRO = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/clever-handler"; // endereco da funcao de cadastro
+const FUNC_GERIR = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/gerir-participante"; // funcao de gestao de participantes
 const VAPID_PUBLIC = "BFnNxgNHnFaACuuX0uGSazJ_y4UcdldUESzyAa_v1Tzmx_CBSTbQuJSaQ-G599KPKxIWgvGKOBhMtrUk-yH4AaU"; // chave publica de notificacoes (ja preenchida)
 /* ===================================================================== */
 
@@ -1314,7 +1405,7 @@ $("btnAddLembrete").addEventListener("click", async () => {
   try {
     await api("/rest/v1/lembretes", {
       method: "POST", headers: { "Prefer": "return=minimal" },
-      body: JSON.stringify({ user_id: sessao.user.id, horario: hora, dias_semana: Array.from(diasNovo).sort() })
+      body: JSON.stringify({ user_id: sessao.user.id, horario: hora, dias_semana: Array.from(diasNovo).sort(), mensagem: $("lbMsg").value.trim() || null })
     });
     aviso("avisoLembrete", "ok", "Lembrete adicionado.");
     await listaLembretes();
@@ -1327,24 +1418,26 @@ $("btnAddLembrete").addEventListener("click", async () => {
 async function abrirAdmin() {
   if (!perfil || perfil.papel !== "admin") return;
   mostraTela("telaAdmin");
-  await adCarregaMural();
+  await Promise.all([adCarregaMural(), adCarregaParticipantes()]);
 }
 $("btnAdCadastrar").addEventListener("click", async () => {
   limpaAviso("avisoAdCad");
   const nome = $("adNome").value.trim();
+  const usuario = $("adUsuario").value.trim();
   const senha = $("adSenha").value;
-  if (!nome || senha.length < 6) { aviso("avisoAdCad", "erro", "Preencha o nome e uma senha de ao menos 6 caracteres."); return; }
+  if (!nome || !usuario || senha.length < 6) { aviso("avisoAdCad", "erro", "Preencha nome, usuário e uma senha de ao menos 6 caracteres."); return; }
   const btn = $("btnAdCadastrar"); btn.disabled = true;
   try {
     const resp = await fetch(FUNC_CADASTRO, {
       method: "POST",
       headers: { "apikey": SUPABASE_ANON, "Authorization": "Bearer " + sessao.access_token, "Content-Type": "application/json" },
-      body: JSON.stringify({ username: nome, senha, nome })
+      body: JSON.stringify({ username: usuario, senha, nome })
     });
     const r = await resp.json();
     if (!resp.ok) throw new Error(r && (r.erro || r.message) || ("HTTP " + resp.status));
     aviso("avisoAdCad", "ok", "Cadastro feito.\nUsuário: " + r.username + "\nSenha: " + senha + "\nPasse esses dados para a pessoa.");
-    $("adNome").value = "";
+    $("adNome").value = ""; $("adUsuario").value = "";
+    await adCarregaParticipantes();
   } catch (e) {
     const m = /ja existe/i.test(e.message) ? e.message + " (tente uma variação, ex.: nome2)" : e.message;
     aviso("avisoAdCad", "erro", "Não deu certo: " + m);
@@ -1380,6 +1473,230 @@ $("adMural").addEventListener("click", async ev => {
   } catch (e) { alert("Não foi possível moderar: " + e.message); }
 });
 
+
+/* ================= FASE 5 ================= */
+const REGULAMENTO_HTML = `
+  <h4>Período</h4>
+  <p>De 03/08/2026 a 03/10/2026 (2 meses). Novas temporadas poderão ser abertas.</p>
+  <h4>Como pontuar</h4>
+  <ul>
+    <li>8 tarefas saudáveis valem <b>+1 ponto</b> cada, por dia.</li>
+    <li>5 hábitos a evitar valem <b>-1 ponto</b> cada, se acontecerem no dia.</li>
+    <li>O saldo diário vai de -5 a +8. A pontuação é acumulada.</li>
+  </ul>
+  <h4>Prazo de lançamento</h4>
+  <p>Cada dia pode ser lançado em até 48 horas. Depois disso, o dia fica bloqueado e não pontua.</p>
+  <h4>Metas pessoais</h4>
+  <p>Nos 5 primeiros dias após a sua entrada, você pode personalizar suas metas (água, atividade, sono, lazer, frutas, legumes). Os pontos consideram sempre o mínimo oficial; sua meta pessoal alimenta os indicadores individuais e do grupo.</p>
+  <h4>Vencedor e prêmio</h4>
+  <p>Vence quem tiver a maior pontuação acumulada. Empatados dividem a colocação, sem desempate. O prêmio é surpresa.</p>
+  <h4>Privacidade</h4>
+  <p>O detalhe das suas tarefas e as suas medidas corporais são só seus. O ranking mostra apenas nome e pontuação. Os indicadores do grupo são sempre agregados, sem nomes.</p>
+  <h4>Mural</h4>
+  <p>Espaço de incentivo entre a turma. Recados de até 100 caracteres, com respeito. O organizador pode ocultar conteúdos inadequados.</p>
+`;
+
+/* ---------- consentimento: abas e recusa ---------- */
+$("painelRegul").innerHTML = REGULAMENTO_HTML;
+$("abaDados").addEventListener("click", () => {
+  $("abaDados").classList.add("ativo"); $("abaRegul").classList.remove("ativo");
+  $("painelDados").classList.add("ativo"); $("painelRegul").classList.remove("ativo");
+});
+$("abaRegul").addEventListener("click", () => {
+  $("abaRegul").classList.add("ativo"); $("abaDados").classList.remove("ativo");
+  $("painelRegul").classList.add("ativo"); $("painelDados").classList.remove("ativo");
+});
+$("btnNaoConcordo").addEventListener("click", () => { apagaSessao(); mostraTela("telaLogin"); });
+
+/* ---------- tela regulamento ---------- */
+function abrirRegulamento() {
+  $("regulamentoCorpo").innerHTML = REGULAMENTO_HTML;
+  mostraTela("telaRegulamento");
+}
+
+/* ---------- tema escuro ---------- */
+function aplicaTemaSalvo() {
+  try { if (localStorage.getItem("ms_tema") === "escuro") document.body.classList.add("tema-escuro"); } catch {}
+}
+function alternaTema() {
+  document.body.classList.toggle("tema-escuro");
+  try { localStorage.setItem("ms_tema", document.body.classList.contains("tema-escuro") ? "escuro" : "claro"); } catch {}
+}
+aplicaTemaSalvo();
+
+/* ---------- tela publica (sem login) ---------- */
+async function abrirPublico() {
+  mostraTela("telaPublica");
+  try {
+    const [rank, tars] = await Promise.all([
+      api("/rest/v1/vw_ranking?select=nome,apelido,pontos_total"),
+      api("/rest/v1/tarefas?ativo=eq.true&select=grupo,descricao,valor_ponto,minimo_padrao&order=grupo.asc,ordem.asc")
+    ]);
+    $("pubRank").innerHTML = (rank || []).length ? rank.map((r, i) => {
+      const lider = i === 0 && r.pontos_total > 0;
+      return `<div class="rank-item ${lider ? "lider" : ""}">
+        <div class="pos">${lider ? "👑" : (i + 1) + "º"}</div>
+        <div class="nome">${r.apelido || r.nome}</div>
+        <div class="pts">${r.pontos_total}</div></div>`;
+    }).join("") : '<div class="nota">O desafio ainda não começou a pontuar.</div>';
+    const grupoHtml = (g, titulo, cls) => `<div class="grupo-titulo ${cls}">${titulo}</div>` +
+      (tars || []).filter(t => t.grupo === g && t.valor_ponto !== 0).map(t =>
+        `<div class="linha-tarefa"><span>${t.descricao}${t.minimo_padrao ? " (mín.: " + t.minimo_padrao + ")" : ""}</span><span class="pct">${t.valor_ponto > 0 ? "+1" : "-1"}</span></div>`
+      ).join("");
+    $("pubTarefas").innerHTML = grupoHtml(1, "Ganha ponto", "ganha") + grupoHtml(2, "Perde ponto", "perde");
+  } catch (e) {
+    $("pubRank").innerHTML = '<div class="nota">Erro ao carregar: ' + e.message + '</div>';
+  }
+}
+$("btnVerPublico").addEventListener("click", abrirPublico);
+$("btnPubVoltar").addEventListener("click", () => mostraTela("telaLogin"));
+
+/* ---------- compartilhar no WhatsApp ---------- */
+async function compartilharCard() {
+  try {
+    await garanteBase();
+    const uid = sessao.user.id;
+    const rank = cacheRanking && cacheRanking.length ? cacheRanking : await api("/rest/v1/vw_ranking?select=user_id,nome,apelido,pontos_total");
+    cacheRanking = rank || [];
+    const pos = cacheRanking.findIndex(r => r.user_id === uid) + 1;
+    const meu = cacheRanking.find(r => r.user_id === uid);
+    const pontos = meu ? meu.pontos_total : 0;
+    const streakTxt = $("pgStreak") ? $("pgStreak").textContent : "0";
+
+    const cv = document.createElement("canvas");
+    cv.width = 800; cv.height = 800;
+    const cx = cv.getContext("2d");
+    const grad = cx.createLinearGradient(0, 0, 0, 800);
+    grad.addColorStop(0, "#4CAF7D"); grad.addColorStop(1, "#5FC5D6");
+    cx.fillStyle = grad; cx.fillRect(0, 0, 800, 800);
+    cx.fillStyle = "rgba(255,255,255,0.16)";
+    const arred = (x, y, w, h, r) => { cx.beginPath(); cx.moveTo(x + r, y); cx.arcTo(x + w, y, x + w, y + h, r); cx.arcTo(x + w, y + h, x, y + h, r); cx.arcTo(x, y + h, x, y, r); cx.arcTo(x, y, x + w, y, r); cx.fill(); };
+    arred(60, 60, 680, 680, 36);
+    cx.fillStyle = "#fff"; cx.textAlign = "center";
+    cx.font = "800 54px Nunito, Arial";
+    cx.fillText("Desafio Mais Saúde", 400, 175);
+    cx.font = "600 26px Inter, Arial";
+    cx.fillText("na Rotina Diária", 400, 215);
+    cx.font = "800 150px Nunito, Arial";
+    cx.fillText(String(pontos), 400, 420);
+    cx.font = "600 34px Inter, Arial";
+    cx.fillText("pontos", 400, 470);
+    cx.font = "700 40px Nunito, Arial";
+    cx.fillText((pos > 0 ? pos + "º lugar" : "") + (Number(streakTxt) > 0 ? "  ·  🔥 " + streakTxt + " dias" : ""), 400, 560);
+    cx.font = "600 26px Inter, Arial";
+    cx.fillText(meu ? (meu.apelido || meu.nome) : "", 400, 640);
+
+    const texto = "Estou no Desafio Mais Saúde! " + pontos + " pontos" + (pos > 0 ? ", " + pos + "º lugar" : "") + " 🌱💪";
+    const blob = await new Promise(res => cv.toBlob(res, "image/png"));
+    const arquivo = new File([blob], "desafio-mais-saude.png", { type: "image/png" });
+    if (navigator.canShare && navigator.canShare({ files: [arquivo] })) {
+      await navigator.share({ files: [arquivo], text: texto });
+    } else if (navigator.share) {
+      await navigator.share({ text: texto });
+    } else {
+      window.open("https://wa.me/?text=" + encodeURIComponent(texto), "_blank");
+    }
+  } catch (e) {
+    if (String(e && e.name) !== "AbortError") alert("Não foi possível compartilhar: " + (e && e.message ? e.message : e));
+  }
+}
+
+/* ---------- admin: lista, senha, editar, excluir, exportar ---------- */
+async function chamaGerir(corpo) {
+  const resp = await fetch(FUNC_GERIR, {
+    method: "POST",
+    headers: { "apikey": SUPABASE_ANON, "Authorization": "Bearer " + sessao.access_token, "Content-Type": "application/json" },
+    body: JSON.stringify(corpo)
+  });
+  const r = await resp.json();
+  if (!resp.ok) throw new Error(r && (r.erro || r.message) || ("HTTP " + resp.status));
+  return r;
+}
+async function adCarregaParticipantes() {
+  try {
+    const linhas = await api("/rest/v1/perfis?papel=eq.participante&select=id,nome,username&order=nome.asc");
+    $("adLista").innerHTML = (linhas || []).length ? linhas.map(p =>
+      `<div class="part-linha">
+        <div class="pn">${p.nome}<small>usuário: ${p.username}</small></div>
+        <button title="Trocar senha" data-psen="${p.id}" data-pn="${p.nome}">🔑</button>
+        <button title="Editar nome e usuário" data-ped="${p.id}" data-pn="${p.nome}" data-pu="${p.username}">✏️</button>
+        <button title="Excluir" data-pex="${p.id}" data-pn="${p.nome}" data-pu="${p.username}">🗑</button>
+      </div>`
+    ).join("") : '<div class="nota">Nenhum participante cadastrado ainda.</div>';
+  } catch (e) {
+    $("adLista").innerHTML = '<div class="nota">Erro: ' + e.message + '</div>';
+  }
+}
+$("adLista").addEventListener("click", async ev => {
+  const t = ev.target;
+  try {
+    if (t.dataset && t.dataset.psen) {
+      const nova = prompt("Nova senha para " + t.dataset.pn + " (mínimo 6 caracteres):", "trocar123");
+      if (nova === null) return;
+      if (nova.length < 6) { alert("A senha precisa de ao menos 6 caracteres."); return; }
+      await chamaGerir({ acao: "senha", user_id: t.dataset.psen, senha: nova });
+      alert("Senha trocada. Informe a pessoa: " + nova);
+      return;
+    }
+    if (t.dataset && t.dataset.ped) {
+      const nome = prompt("Nome de exibição:", t.dataset.pn);
+      if (nome === null) return;
+      const usuario = prompt("Usuário de login (sem espaços nem acentos):", t.dataset.pu);
+      if (usuario === null) return;
+      const r = await chamaGerir({ acao: "editar", user_id: t.dataset.ped, nome, username: usuario });
+      alert("Atualizado. Usuário de login: " + r.username);
+      await adCarregaParticipantes();
+      return;
+    }
+    if (t.dataset && t.dataset.pex) {
+      if (!confirm("Excluir " + t.dataset.pn + "? Todos os lançamentos, metas, medidas e recados dessa pessoa serão apagados.")) return;
+      const conf = prompt('Dupla confirmação: digite o usuário "' + t.dataset.pu + '" para excluir definitivamente:');
+      if (conf === null) return;
+      if (conf.trim().toLowerCase() !== t.dataset.pu) { alert("Texto não confere. Exclusão cancelada."); return; }
+      await chamaGerir({ acao: "excluir", user_id: t.dataset.pex });
+      alert("Participante excluído.");
+      await adCarregaParticipantes();
+      await carregaRanking().catch(() => {});
+      return;
+    }
+  } catch (e) { alert("Não deu certo: " + e.message); }
+});
+
+async function exportarXlsx() {
+  limpaAviso("avisoExport");
+  const btn = $("btnExportarXlsx"); btn.disabled = true;
+  try {
+    if (!window.XLSX) {
+      await new Promise((res, rej) => {
+        const sc = document.createElement("script");
+        sc.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js";
+        sc.onload = res; sc.onerror = () => rej(new Error("Falha ao carregar a biblioteca de Excel"));
+        document.head.appendChild(sc);
+      });
+    }
+    const [rank, lanc, tars, perfs] = await Promise.all([
+      api("/rest/v1/vw_ranking?select=nome,apelido,pontos_total"),
+      api("/rest/v1/lancamentos?select=user_id,data,tarefa_id,marcado&order=data.asc"),
+      api("/rest/v1/tarefas?select=id,codigo,descricao"),
+      api("/rest/v1/perfis?select=id,nome")
+    ]);
+    const nomePor = {}; (perfs || []).forEach(p => nomePor[p.id] = p.nome);
+    const tarefaPor = {}; (tars || []).forEach(t => tarefaPor[t.id] = t.codigo + " " + t.descricao);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(
+      (rank || []).map((r, i) => ({ Posicao: i + 1, Nome: r.apelido || r.nome, Pontos: r.pontos_total }))
+    ), "Ranking");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(
+      (lanc || []).map(l => ({ Participante: nomePor[l.user_id] || l.user_id, Data: l.data, Tarefa: tarefaPor[l.tarefa_id] || l.tarefa_id, Marcado: l.marcado ? "sim" : "nao" }))
+    ), "Lancamentos");
+    XLSX.writeFile(wb, "desafio-mais-saude.xlsx");
+    aviso("avisoExport", "ok", "Arquivo gerado e baixado.");
+  } catch (e) {
+    aviso("avisoExport", "erro", "Não foi possível exportar: " + e.message);
+  } finally { btn.disabled = false; }
+}
+$("btnExportarXlsx").addEventListener("click", exportarXlsx);
+
 /* ---------------- drawer (padrao do app Bolao SSGP) ---------------- */
 function fechaMenu() { document.body.classList.remove("menu-aberto"); }
 $("btnMenu").addEventListener("click", () => document.body.classList.toggle("menu-aberto"));
@@ -1396,6 +1713,9 @@ $("drawer").addEventListener("click", ev => {
   if (acao === "medidas") abrirMedidas();
   if (acao === "metas") abrirMetas();
   if (acao === "lembretes") abrirLembretes();
+  if (acao === "regulamento") abrirRegulamento();
+  if (acao === "compartilhar") compartilharCard();
+  if (acao === "tema") alternaTema();
   if (acao === "admin") abrirAdmin();
   if (acao === "senha") { limpaAviso("avisoSenha"); mostraTela("telaSenha"); }
   if (acao === "sair") { apagaSessao(); mostraTela("telaLogin"); }
