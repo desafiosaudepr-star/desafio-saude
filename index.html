@@ -466,6 +466,7 @@
    ===================================================================== */
 const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM";
+const FUNC_CADASTRO = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/clever-handler"; // endereco da funcao de cadastro
 const VAPID_PUBLIC = "BFnNxgNHnFaACuuX0uGSazJ_y4UcdldUESzyAa_v1Tzmx_CBSTbQuJSaQ-G599KPKxIWgvGKOBhMtrUk-yH4AaU"; // chave publica de notificacoes (ja preenchida)
 /* ===================================================================== */
 
@@ -1335,10 +1336,13 @@ $("btnAdCadastrar").addEventListener("click", async () => {
   if (!nome || senha.length < 6) { aviso("avisoAdCad", "erro", "Preencha o nome e uma senha de ao menos 6 caracteres."); return; }
   const btn = $("btnAdCadastrar"); btn.disabled = true;
   try {
-    const r = await api("/functions/v1/criar-participante", {
+    const resp = await fetch(FUNC_CADASTRO, {
       method: "POST",
+      headers: { "apikey": SUPABASE_ANON, "Authorization": "Bearer " + sessao.access_token, "Content-Type": "application/json" },
       body: JSON.stringify({ username: nome, senha, nome })
     });
+    const r = await resp.json();
+    if (!resp.ok) throw new Error(r && (r.erro || r.message) || ("HTTP " + resp.status));
     aviso("avisoAdCad", "ok", "Cadastro feito.\nUsuário: " + r.username + "\nSenha: " + senha + "\nPasse esses dados para a pessoa.");
     $("adNome").value = "";
   } catch (e) {
