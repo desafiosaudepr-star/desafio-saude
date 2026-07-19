@@ -3,14 +3,15 @@
 // (a casca do app). Dados da API nunca sao cacheados, para o conteudo
 // sempre refletir o estado real do banco.
 
-const CACHE = "mais-saude-v7";
+const CACHE = "mais-saude-v8";
 const ARQUIVOS = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icons/icone-192.png",
   "./icons/icone-512.png",
-  "./icons/icone-512-maskable.png"
+  "./icons/icone-512-maskable.png",
+  "./img/fundo.jpg"
 ];
 
 self.addEventListener("install", (ev) => {
