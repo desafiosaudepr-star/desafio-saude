@@ -1542,13 +1542,15 @@ $("btnAtivarPush").addEventListener("click", async () => {
     const perm = await Notification.requestPermission();
     if (perm !== "granted") { aviso("avisoPush", "erro", "Permissão de notificação não concedida."); return; }
     const reg = await navigator.serviceWorker.ready;
-    let sub = await reg.pushManager.getSubscription();
-    if (!sub) {
-      sub = await reg.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: b64urlParaUint8(VAPID_PUBLIC)
-      });
-    }
+    // Sempre recria a inscricao do zero: se houver uma antiga (possivelmente
+    // expirada no servico de push), descadastra antes, evitando reaproveitar
+    // um registro morto (status 410).
+    const antiga = await reg.pushManager.getSubscription();
+    if (antiga) { try { await antiga.unsubscribe(); } catch {} }
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: b64urlParaUint8(VAPID_PUBLIC)
+    });
     await api("/rest/v1/push_assinaturas?on_conflict=endpoint", {
       method: "POST",
       headers: { "Prefer": "resolution=merge-duplicates,return=minimal" },
