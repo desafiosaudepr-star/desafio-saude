@@ -587,6 +587,7 @@
   <div class="cartao">
     <div id="pushEstado" class="nota">Verificando este aparelho...</div>
     <button class="botao" id="btnAtivarPush">Ativar notificações neste aparelho</button>
+    <button class="botao secundario" id="btnTestePush">Enviar notificação de teste agora</button>
     <div class="aviso" id="avisoPush"></div>
     <p class="nota">No iPhone, as notificações só funcionam com o app instalado na tela de início (Safari, botão Compartilhar, Adicionar à Tela de Início) e no iOS 16.4 ou mais novo. A entrega pode atrasar em alguns aparelhos Android por economia de bateria.</p>
   </div>
@@ -636,13 +637,66 @@
   <div id="pubRank"></div>
   <div class="secao-titulo">As tarefas do desafio</div>
   <div id="pubTarefas"></div>
+  <button class="botao secundario" id="btnPubSobre">Sobre o app</button>
+  <button class="botao secundario" id="btnPubRegul">Regulamento</button>
   <button class="botao secundario" id="btnPubVoltar">Voltar para o login</button>
+</section>
+
+
+<!-- SOBRE O APP -->
+<section class="tela" id="telaSobre">
+  <div class="saudacao"><h2>Sobre o app</h2><p>Desafio Mais Saúde · na Rotina Diária</p></div>
+  <div class="cartao regulamento">
+    <h4>Nosso objetivo</h4>
+    <p>Transformar pequenos hábitos diários em grandes vitórias de saúde, em grupo. Durante 2 meses, a turma cuida do sono, da alimentação, da hidratação, da atividade física e do tempo de tela, somando pontos a cada dia bem vivido e se apoiando pelo caminho.</p>
+    <h4>Como funciona</h4>
+    <ul>
+      <li><b>Meu Dia:</b> um checklist de 1 toque para marcar as tarefas cumpridas. Cada dia pode ser lançado em até 48 horas.</li>
+      <li><b>Pontos:</b> 8 tarefas saudáveis valem +1; 5 hábitos a evitar valem -1. O saldo diário vai de -5 a +8.</li>
+      <li><b>Progresso:</b> gráficos da sua evolução e da turma, sequência de dias (streak), dias perfeitos e indicadores de água, atividade, sono e mais.</li>
+      <li><b>Turma:</b> ranking com a pontuação de todos e um mural de recados com reações, para a torcida ficar acesa.</li>
+      <li><b>Metas pessoais:</b> nos 5 primeiros dias você personaliza suas metas; os pontos seguem o mínimo oficial, e as metas alimentam os indicadores.</li>
+      <li><b>Minhas Medidas:</b> acompanhamento opcional de peso e bioimpedância, totalmente privado.</li>
+      <li><b>Lembretes:</b> avisos no celular, nos horários e dias que você escolher, com mensagem personalizável.</li>
+    </ul>
+    <h4>Privacidade em primeiro lugar</h4>
+    <p>O detalhe das suas tarefas e as suas medidas são só seus. O grupo vê apenas nome e pontuação, e os indicadores coletivos nunca mostram nomes.</p>
+    <h4>Vencedor</h4>
+    <p>Vence quem tiver a maior pontuação acumulada ao final. O prêmio é surpresa!</p>
+  </div>
+</section>
+
+
+<!-- SOBRE O APP -->
+<section class="tela" id="telaSobre">
+  <div class="saudacao"><h2>Sobre o app</h2><p>Desafio Mais Saúde, na Rotina Diária</p></div>
+  <div class="cartao regulamento">
+    <h4>Nosso objetivo</h4>
+    <p>Transformar pequenos hábitos diários em grandes vitórias, juntos. Durante 2 meses, a turma cuida do sono, da alimentação, da hidratação, do corpo em movimento e do tempo longe das telas, somando pontos a cada dia bem vivido e se apoiando pelo caminho.</p>
+    <h4>Como funciona</h4>
+    <ul>
+      <li>Checklist diário de 1 toque: 8 tarefas que ganham ponto e 5 hábitos a evitar.</li>
+      <li>Prazo de 48 horas para lançar cada dia.</li>
+      <li>Ranking da turma e gráfico de evolução, com coroa para quem lidera.</li>
+      <li>Mural de recados com reações, para a torcida ficar viva.</li>
+      <li>Indicadores pessoais e do grupo: litros de água, minutos de atividade, horas de sono e mais.</li>
+      <li>Metas personalizáveis nos 5 primeiros dias (os pontos seguem o mínimo oficial).</li>
+      <li>Medidas corporais opcionais e totalmente privadas, nem o organizador vê.</li>
+      <li>Lembretes no celular com horários e mensagens do seu jeito.</li>
+      <li>Tema claro ou escuro, e instalação como app na tela de início.</li>
+    </ul>
+    <h4>Privacidade</h4>
+    <p>O detalhe do seu dia é só seu. O grupo vê apenas nome e pontuação, e os indicadores coletivos nunca têm nomes.</p>
+    <p class="nota">Feito com carinho para a nossa turma. Tecnologia: aplicativo web instalável (PWA) com banco seguro na nuvem.</p>
+  </div>
+  <button class="botao secundario" id="btnSobreVoltar" style="display:none">Voltar</button>
 </section>
 
 <!-- REGULAMENTO -->
 <section class="tela" id="telaRegulamento">
   <div class="saudacao"><h2>Regulamento</h2><p>versão simplificada</p></div>
   <div class="cartao regulamento" id="regulamentoCorpo"></div>
+  <button class="botao secundario" id="btnRegVoltar" style="display:none">Voltar</button>
 </section>
 
 
@@ -669,6 +723,7 @@
 const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM";
 const FUNC_CADASTRO = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/clever-handler"; // endereco da funcao de cadastro
+const FUNC_LEMBRETES = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/enviar-lembretes"; // confira o endereco real na pagina da funcao
 const FUNC_GERIR = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/gerir-participante"; // funcao de gestao de participantes
 const VAPID_PUBLIC = "BFnNxgNHnFaACuuX0uGSazJ_y4UcdldUESzyAa_v1Tzmx_CBSTbQuJSaQ-G599KPKxIWgvGKOBhMtrUk-yH4AaU"; // chave publica de notificacoes (ja preenchida)
 /* ===================================================================== */
@@ -694,11 +749,15 @@ let diaSelecionado = null;
 /* ---------------- utilidades ---------------- */
 function $(id) { return document.getElementById(id); }
 const TAB_POR_TELA = { telaMeuDia: "tabMeudia", telaProgresso: "tabProgresso", telaTurma: "tabTurma", telaMais: "tabMais",
-  telaMedidas: "tabMais", telaMetas: "tabMais", telaLembretes: "tabMais", telaRegulamento: "tabMais", telaAdmin: "tabMais", telaSenha: "tabMais" };
+  telaMedidas: "tabMais", telaMetas: "tabMais", telaLembretes: "tabMais", telaRegulamento: "tabMais", telaSobre: "tabMais", telaAdmin: "tabMais", telaSenha: "tabMais" };
 function mostraTela(id) {
   document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
   $(id).classList.add("ativa");
-  const semTopo = (id === "telaLogin" || id === "telaConsent" || id === "telaPublica");
+  const logado = !!sessao;
+  const semTopo = (id === "telaLogin" || id === "telaConsent" || id === "telaPublica") ||
+                  (!logado && (id === "telaSobre" || id === "telaRegulamento"));
+  if ($("btnSobreVoltar")) $("btnSobreVoltar").style.display = (!logado && id === "telaSobre") ? "" : "none";
+  if ($("btnRegVoltar")) $("btnRegVoltar").style.display = (!logado && id === "telaRegulamento") ? "" : "none";
   $("topo").style.display = semTopo ? "none" : "flex";
   $("rodapeSaldo").style.display = (id === "telaMeuDia") ? "flex" : "none";
   const comTab = !semTopo;
@@ -1454,6 +1513,28 @@ async function estadoPush() {
   } catch { el.textContent = "Não foi possível verificar o estado das notificações."; }
 }
 
+
+$("btnTestePush").addEventListener("click", async () => {
+  limpaAviso("avisoPush");
+  const btn = $("btnTestePush"); btn.disabled = true; btn.textContent = "Enviando teste...";
+  try {
+    const resp = await fetch(FUNC_LEMBRETES, {
+      method: "POST",
+      headers: { "apikey": SUPABASE_ANON, "Authorization": "Bearer " + sessao.access_token, "Content-Type": "application/json" },
+      body: JSON.stringify({ teste: true })
+    });
+    const r = await resp.json();
+    if (!resp.ok) throw new Error(r && (r.erro || r.message) || ("HTTP " + resp.status));
+    if (r.ok) {
+      aviso("avisoPush", "ok", "Teste enviado para " + r.enviados + " aparelho(s). O aviso deve aparecer em segundos.");
+    } else {
+      aviso("avisoPush", "erro", "O teste não chegou. Diagnóstico do servidor:\n" + (r.diagnostico || (r.erros || []).join("\n") || JSON.stringify(r)));
+    }
+  } catch (e) {
+    aviso("avisoPush", "erro", "Falha ao chamar a função: " + e.message + "\nConfira se a função enviar-lembretes está publicada, com o endereço igual ao da linha FUNC_LEMBRETES, e com a verificação de JWT desligada.");
+  } finally { btn.disabled = false; btn.textContent = "Enviar notificação de teste agora"; }
+});
+
 $("btnAtivarPush").addEventListener("click", async () => {
   limpaAviso("avisoPush");
   const btn = $("btnAtivarPush"); btn.disabled = true;
@@ -1649,6 +1730,12 @@ $("abaRegul").addEventListener("click", () => {
 $("btnNaoConcordo").addEventListener("click", () => { apagaSessao(); mostraTela("telaLogin"); });
 
 /* ---------- tela regulamento ---------- */
+
+let origemConsulta = null; // "publica" quando aberto a partir da visualizacao publica
+function abrirSobre() {
+  origemConsulta = null;
+  mostraTela("telaSobre");
+}
 function abrirRegulamento() {
   $("regulamentoCorpo").innerHTML = REGULAMENTO_HTML;
   mostraTela("telaRegulamento");
@@ -1690,6 +1777,12 @@ async function abrirPublico() {
     $("pubRank").innerHTML = '<div class="nota">Erro ao carregar: ' + e.message + '</div>';
   }
 }
+
+function abrirSobre() { mostraTela("telaSobre"); }
+$("btnPubSobre").addEventListener("click", abrirSobre);
+$("btnPubRegul").addEventListener("click", abrirRegulamento);
+$("btnSobreVoltar").addEventListener("click", () => mostraTela("telaPublica"));
+$("btnRegVoltar").addEventListener("click", () => mostraTela("telaPublica"));
 $("btnVerPublico").addEventListener("click", abrirPublico);
 $("btnPubVoltar").addEventListener("click", () => mostraTela("telaLogin"));
 
@@ -1855,6 +1948,8 @@ const ITENS_MAIS = [
   ["metas", "Minhas Metas", '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8"/>'],
   ["lembretes", "Lembretes", '<path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/>'],
   ["regulamento", "Regulamento", '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/>'],
+  ["sobre", "Sobre o app", '<circle cx="12" cy="12" r="9"/><path d="M12 8.2v0.2M12 11v5"/>'],
+  ["sobre", "Sobre o app", '<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7.5v0.5"/>'],
   ["compartilhar", "Compartilhar no WhatsApp", '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/>'],
   ["tema", "Tema escuro / claro", '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>'],
   ["senha", "Trocar minha senha", '<rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>'],
@@ -1875,6 +1970,8 @@ function executaAcao(acao) {
   if (acao === "metas") abrirMetas();
   if (acao === "lembretes") abrirLembretes();
   if (acao === "regulamento") abrirRegulamento();
+  if (acao === "sobre") abrirSobre();
+  if (acao === "sobre") abrirSobre();
   if (acao === "compartilhar") compartilharCard();
   if (acao === "tema") alternaTema();
   if (acao === "admin") abrirAdmin();
@@ -1912,6 +2009,7 @@ $("drawer").addEventListener("click", ev => {
   if (acao === "metas") abrirMetas();
   if (acao === "lembretes") abrirLembretes();
   if (acao === "regulamento") abrirRegulamento();
+  if (acao === "sobre") abrirSobre();
   if (acao === "compartilhar") compartilharCard();
   if (acao === "tema") alternaTema();
   if (acao === "admin") abrirAdmin();
