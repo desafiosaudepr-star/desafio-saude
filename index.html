@@ -52,7 +52,7 @@
   }
   header img { width: 34px; height: 34px; border-radius: 9px; }
   header .titulo { font-family: 'Nunito'; font-weight: 800; font-size: 1.05rem; color: var(--verde-escuro); flex: 1; }
-  .btn-menu {
+  .btn-menu { display: none !important; } .btn-menu-off {
     width: 40px; height: 40px; border: none; background: transparent;
     display: flex; flex-direction: column; justify-content: center; gap: 5px;
     cursor: pointer; padding: 8px;
@@ -289,6 +289,90 @@
   .part-linha .pn small { display: block; color: var(--texto-suave); font-size: var(--fs-peq); }
   .part-linha button { border: 1px solid rgba(76,175,125,0.35); background: transparent; border-radius: 10px; padding: 6px 8px; cursor: pointer; font-size: 0.9rem; }
   .link-publico { display: block; text-align: center; margin-top: 14px; color: var(--verde-escuro); font-weight: 600; font-size: var(--fs-corpo); text-decoration: underline; cursor: pointer; background: none; border: none; width: 100%; }
+
+  /* ---------- rodada 1: base visual premium ---------- */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1;
+    background: url("img/fundo.jpg") center top / cover no-repeat;
+    opacity: 0.12; pointer-events: none;
+  }
+  body::after {
+    content: ""; position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(247,250,247,0.35), rgba(247,250,247,0.75));
+    pointer-events: none;
+  }
+  body.tema-escuro::before { opacity: 0.05; }
+  body.tema-escuro::after { background: linear-gradient(180deg, rgba(16,24,21,0.5), rgba(16,24,21,0.85)); }
+
+  .cartao, .mini-card, .grafico-caixa, .tarefa, .rank-item, .bolha, .part-linha, .mural-cab {
+    border-color: rgba(255,255,255,0.45);
+    box-shadow: 0 12px 32px -4px rgba(46,58,52,0.04), 0 4px 12px -2px rgba(46,58,52,0.02);
+  }
+  body.tema-escuro .cartao, body.tema-escuro .mini-card, body.tema-escuro .grafico-caixa,
+  body.tema-escuro .tarefa, body.tema-escuro .rank-item, body.tema-escuro .bolha,
+  body.tema-escuro .part-linha, body.tema-escuro .mural-cab { border-color: rgba(255,255,255,0.08); }
+
+  body, p, li, label, .tarefa .txt { font-weight: 500; }
+  @media (max-width: 380px) { :root { --fs-display: 1.35rem; } }
+
+  input { background: #f4f9f6; border: 1.5px solid rgba(76,175,125,0.12); border-bottom-width: 2.5px; }
+  input:focus { border-color: rgba(76,175,125,0.12); border-bottom-color: var(--agua); box-shadow: none; }
+  body.tema-escuro input { background: #1b2a23; }
+
+  .seletor-dia button, .seletor-modo button, .abas button { min-height: 44px; }
+  .tarefa { min-height: 56px; }
+  .tarefa .check { transition: background 0.25s, border-color 0.25s, color 0.25s; }
+
+  .tela.ativa { animation: entraTela 0.28s ease; }
+  @keyframes entraTela { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  /* skeleton loaders (rodada 4 usa) */
+  .skel { border-radius: 14px; background: linear-gradient(90deg, rgba(76,175,125,0.10), rgba(76,175,125,0.22), rgba(76,175,125,0.10)); background-size: 200% 100%; animation: pulsa 1.2s ease-in-out infinite; margin-bottom: 9px; }
+  @keyframes pulsa { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+  /* ---------- rodada 2: navegacao inferior ---------- */
+  .tabbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 35;
+    display: none; justify-content: space-around; align-items: stretch;
+    background: var(--vidro); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(255,255,255,0.45);
+    padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+  body.tema-escuro .tabbar { border-top-color: rgba(255,255,255,0.08); }
+  .tabbar button {
+    flex: 1; min-height: 52px; border: none; background: transparent; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    font-family: 'Inter'; font-size: 0.68rem; font-weight: 600; color: var(--texto-suave);
+    border-radius: 12px;
+  }
+  .tabbar button svg { width: 22px; height: 22px; stroke: currentColor; }
+  .tabbar button.ativo { color: var(--verde-escuro); }
+  .tabbar button.ativo svg { stroke: var(--verde-escuro); }
+  body.com-tabbar .tela { padding-bottom: 150px; }
+
+  .saldo-card { position: sticky !important; left:auto; right:auto; bottom:auto; border-top:none; 
+    position: sticky; top: 62px; z-index: 20;
+    display: flex; align-items: center; gap: 14px;
+    background: var(--vidro); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.45); border-radius: 16px;
+    box-shadow: 0 12px 32px -4px rgba(46,58,52,0.06);
+    padding: 10px 16px; margin-bottom: 14px;
+  }
+  body.tema-escuro .saldo-card { position: sticky !important; left:auto; right:auto; bottom:auto; border-top:none;  border-color: rgba(255,255,255,0.08); }
+  .lista-mais button {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    background: var(--vidro); border: 1px solid rgba(255,255,255,0.45); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 9px; cursor: pointer; text-align: left;
+    font-family: 'Inter'; font-weight: 600; font-size: var(--fs-corpo); color: var(--texto);
+    min-height: 50px;
+  }
+  .lista-mais button svg { width: 20px; height: 20px; stroke: var(--verde-escuro); flex-shrink: 0; }
+
+  .grupo-medidas { border: 1px solid rgba(255,255,255,0.45); border-radius: 14px; background: rgba(255,255,255,0.35); margin: 10px 0; padding: 4px 12px; }
+  body.tema-escuro .grupo-medidas { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+  .grupo-medidas summary { cursor: pointer; font-family: 'Nunito'; font-weight: 800; color: var(--verde-escuro); padding: 10px 2px; font-size: var(--fs-secao); list-style: none; min-height: 44px; display: flex; align-items: center; }
+  .grupo-medidas summary::after { content: "\25BE"; margin-left: auto; transition: transform 0.2s; }
+  .grupo-medidas[open] summary::after { transform: rotate(180deg); }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
@@ -381,12 +465,17 @@
     <h2 id="ola">Olá!</h2>
     <p id="dataExtenso"></p>
   </div>
+  <div class="saldo-card rodape-saldo" id="rodapeSaldo" style="display:none">
+    <div class="num" id="saldoNum">0</div>
+    <div class="rotulo">pontos do dia<br><span class="estado" id="estadoSalvar">tudo salvo</span></div>
+    <div class="streak" id="streakTxt"></div>
+  </div>
   <div class="faixa-info" id="faixaPeriodo"></div>
   <div class="seletor-dia">
     <button id="diaOntem">Ontem</button>
     <button id="diaHoje" class="ativo">Hoje</button>
   </div>
-  <div id="listaTarefas" class="centro">Carregando suas tarefas...</div>
+  <div id="listaTarefas"></div>
 </section>
 
 
@@ -410,13 +499,13 @@
     <canvas id="graficoVs" height="200"></canvas>
   </div>
   <div class="secao-titulo">Meus indicadores</div>
-  <div class="lista-ind" id="pgIndividuais"><span class="nota">Carregando...</span></div>
+  <div class="lista-ind" id="pgIndividuais"></div>
   <div class="secao-titulo">Minha adesão por tarefa</div>
-  <div id="pgAdesao"><span class="nota">Carregando...</span></div>
+  <div id="pgAdesao"></div>
   <div class="secao-titulo">Indicadores do grupo (sem nomes)</div>
-  <div class="lista-ind" id="pgColetivos"><span class="nota">Carregando...</span></div>
+  <div class="lista-ind" id="pgColetivos"></div>
   <div class="secao-titulo">Tarefas do grupo (dos registros feitos)</div>
-  <div id="pgTarefasGrupo"><span class="nota">Carregando...</span></div>
+  <div id="pgTarefasGrupo"></div>
 </section>
 
 <!-- RANKING E MURAL -->
@@ -428,7 +517,7 @@
       💬 Mural da turma <span class="cont" id="muralCont">0</span> <span class="seta">▾</span>
     </button>
     <div class="mural-corpo">
-      <div id="muralLista"><div class="nota">Carregando recados...</div></div>
+      <div id="muralLista"></div>
       <div class="mural-envio">
         <input id="muralTexto" maxlength="100" placeholder="Deixe um recado para a turma">
         <button class="botao" id="muralEnviar">Enviar</button>
@@ -440,7 +529,7 @@
   </div>
 
   <div class="secao-titulo" style="display:flex;align-items:center">Ranking <button class="btn-mini" id="btnAtualizaRank" style="margin-left:auto">atualizar</button></div>
-  <div id="rankLista"><div class="nota">Carregando...</div></div>
+  <div id="rankLista"></div>
 </section>
 
 <!-- MINHAS MEDIDAS -->
@@ -449,30 +538,43 @@
   <div class="cartao">
     <label for="mdData">Data</label>
     <input id="mdData" type="date">
-    <div class="grade-campos">
-      <div><label>Peso (kg)</label><input id="mdPeso" type="number" step="0.1" inputmode="decimal"></div>
-      <div><label>IMC</label><input id="mdImc" type="number" step="0.1" inputmode="decimal"></div>
-      <div><label>Gordura (%)</label><input id="mdGord" type="number" step="0.1" inputmode="decimal"></div>
-      <div><label>Massa de gordura (kg)</label><input id="mdMg" type="number" step="0.1" inputmode="decimal"></div>
-      <div><label>Massa magra (kg)</label><input id="mdMm" type="number" step="0.1" inputmode="decimal"></div>
-      <div><label>Água corporal (%)</label><input id="mdAgua" type="number" step="0.1" inputmode="decimal"></div>
-      <div><label>Massa óssea (kg)</label><input id="mdOssea" type="number" step="0.1" inputmode="decimal"></div>
-      <div><label>Gordura visceral</label><input id="mdVisc" type="number" step="0.1" inputmode="decimal"></div>
-      <div><label>Metab. basal (kcal)</label><input id="mdTmb" type="number" step="1" inputmode="numeric"></div>
-      <div><label>Idade metabólica</label><input id="mdIdadeM" type="number" step="1" inputmode="numeric"></div>
-    </div>
+    <details class="grupo-medidas" open>
+      <summary>Básico</summary>
+      <div class="grade-campos">
+        <div><label>Peso (kg)</label><input id="mdPeso" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label>IMC</label><input id="mdImc" type="number" step="0.1" inputmode="decimal"></div>
+      </div>
+    </details>
+    <details class="grupo-medidas">
+      <summary>Composição corporal</summary>
+      <div class="grade-campos">
+        <div><label>Gordura (%)</label><input id="mdGord" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label>Massa de gordura (kg)</label><input id="mdMg" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label>Massa magra (kg)</label><input id="mdMm" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label>Água corporal (%)</label><input id="mdAgua" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label>Massa óssea (kg)</label><input id="mdOssea" type="number" step="0.1" inputmode="decimal"></div>
+        <div><label>Gordura visceral</label><input id="mdVisc" type="number" step="0.1" inputmode="decimal"></div>
+      </div>
+    </details>
+    <details class="grupo-medidas">
+      <summary>Metabolismo</summary>
+      <div class="grade-campos">
+        <div><label>Metab. basal (kcal)</label><input id="mdTmb" type="number" step="1" inputmode="numeric"></div>
+        <div><label>Idade metabólica</label><input id="mdIdadeM" type="number" step="1" inputmode="numeric"></div>
+      </div>
+    </details>
     <button class="botao" id="btnSalvarMedida">Salvar medidas</button>
     <div class="aviso" id="avisoMedida"></div>
   </div>
   <div class="secao-titulo">Registros anteriores</div>
-  <div id="listaMedidas"><div class="nota">Carregando...</div></div>
+  <div id="listaMedidas"></div>
 </section>
 
 <!-- MINHAS METAS -->
 <section class="tela" id="telaMetas">
   <div class="saudacao"><h2>Minhas metas</h2><p id="metasJanela"></p></div>
   <div class="cartao">
-    <div id="metasCampos"><div class="nota">Carregando...</div></div>
+    <div id="metasCampos"></div>
     <button class="botao" id="btnSalvarMetas">Salvar metas</button>
     <div class="aviso" id="avisoMetas"></div>
     <p class="nota">Os pontos do desafio consideram sempre o mínimo oficial. Sua meta pessoal alimenta os seus indicadores e os do grupo.</p>
@@ -489,7 +591,7 @@
     <p class="nota">No iPhone, as notificações só funcionam com o app instalado na tela de início (Safari, botão Compartilhar, Adicionar à Tela de Início) e no iOS 16.4 ou mais novo. A entrega pode atrasar em alguns aparelhos Android por economia de bateria.</p>
   </div>
   <div class="secao-titulo">Meus horários</div>
-  <div id="listaLembretes"><div class="nota">Carregando...</div></div>
+  <div id="listaLembretes"></div>
   <div class="cartao">
     <label for="lbHora">Novo lembrete</label>
     <input id="lbHora" type="time" value="20:00">
@@ -516,14 +618,14 @@
     <div class="aviso" id="avisoAdCad"></div>
   </div>
   <div class="secao-titulo">Participantes</div>
-  <div id="adLista"><div class="nota">Carregando...</div></div>
+  <div id="adLista"></div>
   <div class="cartao">
     <h3 style="color:var(--verde-escuro);margin-top:0">Exportar</h3>
     <button class="botao secundario" id="btnExportarXlsx">Baixar Excel (ranking e lançamentos)</button>
     <div class="aviso" id="avisoExport"></div>
   </div>
   <div class="secao-titulo">Moderação do mural</div>
-  <div id="adMural"><div class="nota">Carregando...</div></div>
+  <div id="adMural"></div>
 </section>
 
 
@@ -531,9 +633,9 @@
 <section class="tela" id="telaPublica">
   <div class="saudacao"><h2>Desafio Mais Saúde</h2><p>na Rotina Diária · visualização pública</p></div>
   <div class="secao-titulo">Ranking</div>
-  <div id="pubRank"><div class="nota">Carregando...</div></div>
+  <div id="pubRank"></div>
   <div class="secao-titulo">As tarefas do desafio</div>
-  <div id="pubTarefas"><div class="nota">Carregando...</div></div>
+  <div id="pubTarefas"></div>
   <button class="botao secundario" id="btnPubVoltar">Voltar para o login</button>
 </section>
 
@@ -543,11 +645,21 @@
   <div class="cartao regulamento" id="regulamentoCorpo"></div>
 </section>
 
-<div class="rodape-saldo" id="rodapeSaldo">
-  <div class="num" id="saldoNum">0</div>
-  <div class="rotulo">pontos do dia<br><span class="estado" id="estadoSalvar">tudo salvo</span></div>
-  <div class="streak" id="streakTxt"></div>
-</div>
+
+
+
+<nav class="tabbar" id="tabbar" aria-label="Navegação">
+  <button data-tab="meudia" id="tabMeudia"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3l8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>Meu Dia</button>
+  <button data-tab="progresso" id="tabProgresso"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M6 16v-5"/><path d="M11 16V8"/><path d="M16 16v-8"/><path d="M21 16V5"/></svg>Progresso</button>
+  <button data-tab="turma" id="tabTurma"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17.5" cy="9" r="2.6"/><path d="M17 14.6c2.8 0.3 4.5 2 4.5 4.9"/></svg>Turma</button>
+  <button data-tab="mais" id="tabMais"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>Mais</button>
+</nav>
+
+<!-- MAIS -->
+<section class="tela" id="telaMais">
+  <div class="saudacao"><h2>Mais</h2><p id="maisNome"></p></div>
+  <div class="lista-mais" id="listaMais"></div>
+</section>
 
 <script>
 /* =====================================================================
@@ -561,7 +673,15 @@ const FUNC_GERIR = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/gerir-
 const VAPID_PUBLIC = "BFnNxgNHnFaACuuX0uGSazJ_y4UcdldUESzyAa_v1Tzmx_CBSTbQuJSaQ-G599KPKxIWgvGKOBhMtrUk-yH4AaU"; // chave publica de notificacoes (ja preenchida)
 /* ===================================================================== */
 
-const ICONES_TEMA = { "1": "🌙", "2": "🍎", "3": "💧", "4": "🏃", "5": "📵" };
+const SVGT = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="#2f7d55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px">' + d + '</svg>';
+const ICONES_TEMA = {
+  "1": SVGT('<path d="M20 13.5A8 8 0 0 1 10.5 4a8 8 0 1 0 9.5 9.5Z"/>'),
+  "2": SVGT('<path d="M12 8q-5-4-6 2q-0.8 6 6 10q6.8-4 6-10q-1-6-6-2Z"/><path d="M12 8q0.4-2.4 2.6-3.6"/>'),
+  "3": SVGT('<path d="M12 3q6 7.2 6 11a6 6 0 0 1-12 0q0-3.8 6-11Z"/>'),
+  "4": SVGT('<circle cx="14" cy="4.5" r="1.8"/><path d="M9 20l2.2-5L8 12l3-4l4 2.5l3-1"/><path d="M8 12l-3.5 1"/>'),
+  "5": SVGT('<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M4 4l16 16"/>'),
+  "6": SVGT('<path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7"/><path d="M3 18h18"/><path d="M7 9V7"/>')
+};
 const CORES_TEMA  = { "1": "rgba(95,197,214,0.25)", "2": "rgba(168,224,197,0.5)", "3": "rgba(95,197,214,0.35)", "4": "rgba(246,169,107,0.3)", "5": "rgba(246,208,107,0.35)" };
 
 let sessao = null;        // { access_token, refresh_token, user: {id} }
@@ -573,11 +693,20 @@ let diaSelecionado = null;
 
 /* ---------------- utilidades ---------------- */
 function $(id) { return document.getElementById(id); }
+const TAB_POR_TELA = { telaMeuDia: "tabMeudia", telaProgresso: "tabProgresso", telaTurma: "tabTurma", telaMais: "tabMais",
+  telaMedidas: "tabMais", telaMetas: "tabMais", telaLembretes: "tabMais", telaRegulamento: "tabMais", telaAdmin: "tabMais", telaSenha: "tabMais" };
 function mostraTela(id) {
   document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
   $(id).classList.add("ativa");
-  $("topo").style.display = (id === "telaLogin" || id === "telaConsent") ? "none" : "flex";
+  const semTopo = (id === "telaLogin" || id === "telaConsent" || id === "telaPublica");
+  $("topo").style.display = semTopo ? "none" : "flex";
   $("rodapeSaldo").style.display = (id === "telaMeuDia") ? "flex" : "none";
+  const comTab = !semTopo;
+  $("tabbar").style.display = comTab ? "flex" : "none";
+  document.body.classList.toggle("com-tabbar", comTab);
+  document.querySelectorAll(".tabbar button").forEach(bt => bt.classList.remove("ativo"));
+  const tab = TAB_POR_TELA[id];
+  if (tab && comTab) $(tab).classList.add("ativo");
   window.scrollTo(0, 0);
 }
 function aviso(id, tipo, txt) {
@@ -689,6 +818,7 @@ $("btnAceitar").addEventListener("click", async () => {
 /* ---------------- meu dia ---------------- */
 async function abrirMeuDia() {
   mostraTela("telaMeuDia");
+  $("listaTarefas").innerHTML = skelHtml(6, 56);
   $("ola").textContent = "Olá, " + (perfil.apelido || perfil.nome.split(" ")[0]) + "!";
   diaSelecionado = hojeISO();
   atualizaSeletorDia();
@@ -892,6 +1022,10 @@ async function garanteBase() {
 /* ---------------- PROGRESSO ---------------- */
 async function abrirProgresso() {
   mostraTela("telaProgresso");
+  $("pgIndividuais").innerHTML = skelHtml(2, 38);
+  $("pgAdesao").innerHTML = skelHtml(4, 30);
+  $("pgColetivos").innerHTML = skelHtml(2, 38);
+  $("pgTarefasGrupo").innerHTML = skelHtml(3, 30);
   await garanteBase();
   if (!desafio) return;
   const uid = sessao.user.id;
@@ -986,7 +1120,7 @@ function desenhaEvolucao(uid) {
   graficoEvo = new Chart($("graficoEvolucao"), {
     type: "line",
     data: { labels: dias.map(fmtDia), datasets },
-    options: { animation: false, responsive: true, plugins: { legend: { labels: { boxWidth: 12, font: { size: 10 } } } }, scales: { y: { ticks: { precision: 0 } } } }
+    options: { animation: false, responsive: true, plugins: { legend: { position: "top", labels: { boxWidth: 12, font: { size: 10 } } } }, scales: { x: { grid: { display: false } }, y: { ticks: { precision: 0 } } } }
   });
 }
 
@@ -1019,8 +1153,8 @@ function desenhaVs(uid) {
     data: { labels: dias.map(fmtDia), datasets },
     options: {
       animation: false, responsive: true,
-      plugins: { legend: { labels: { boxWidth: 12, font: { size: 10 } } } },
-      scales: { y: modoVs === "posicao" ? { reverse: true, ticks: { precision: 0 } } : { ticks: { precision: 0 } } }
+      plugins: { legend: { position: "top", labels: { boxWidth: 12, font: { size: 10 } } } },
+      scales: { x: { grid: { display: false } }, y: modoVs === "posicao" ? { reverse: true, ticks: { precision: 0 } } : { ticks: { precision: 0 } } }
     }
   });
 }
@@ -1060,6 +1194,7 @@ async function abrirTurma() {
 }
 
 async function carregaRanking() {
+  if (!$("rankLista").innerHTML.trim()) $("rankLista").innerHTML = skelHtml(5, 48);
   try {
     const linhas = await api("/rest/v1/vw_ranking?select=user_id,nome,apelido,pontos_total");
     cacheRanking = linhas || [];
@@ -1089,6 +1224,7 @@ $("muralEmojis").addEventListener("click", ev => {
 $("muralTexto").addEventListener("input", () => $("muralChars").textContent = $("muralTexto").value.length);
 
 async function carregaMural() {
+  if (!$("muralLista").innerHTML.trim()) $("muralLista").innerHTML = skelHtml(3, 64);
   try {
     const [msgs, reacs] = await Promise.all([
       api("/rest/v1/mural?oculto=eq.false&select=id,autor_id,mensagem,tipo,data_hora,perfis(nome,apelido)&order=data_hora.desc&limit=50"),
@@ -1180,6 +1316,7 @@ async function abrirMedidas() {
   await listaMedidas();
 }
 async function listaMedidas() {
+  $("listaMedidas").innerHTML = skelHtml(3, 40);
   try {
     const linhas = await api("/rest/v1/medidas_pessoais?user_id=eq." + sessao.user.id + "&select=id,data,peso_kg,gordura_pct,massa_magra_kg&order=data.desc&limit=12");
     $("listaMedidas").innerHTML = (linhas || []).length ? linhas.map(m =>
@@ -1227,6 +1364,7 @@ function janelaMetasAberta() {
 }
 async function abrirMetas() {
   mostraTela("telaMetas");
+  $("metasCampos").innerHTML = skelHtml(4, 44);
   await garanteBase();
   const aberta = janelaMetasAberta();
   $("metasJanela").textContent = aberta
@@ -1362,6 +1500,7 @@ $("lbDias").addEventListener("click", ev => {
 });
 
 async function listaLembretes() {
+  $("listaLembretes").innerHTML = skelHtml(2, 44);
   try {
     const linhas = await api("/rest/v1/lembretes?user_id=eq." + sessao.user.id + "&select=id,horario,dias_semana,ativo&order=horario.asc");
     $("listaLembretes").innerHTML = (linhas || []).length ? linhas.map(l => {
@@ -1445,6 +1584,7 @@ $("btnAdCadastrar").addEventListener("click", async () => {
 });
 
 async function adCarregaMural() {
+  if (!$("adMural").innerHTML.trim()) $("adMural").innerHTML = skelHtml(3, 60);
   try {
     const msgs = await api("/rest/v1/mural?select=id,mensagem,tipo,oculto,data_hora,perfis(nome,apelido)&order=data_hora.desc&limit=100");
     $("adMural").innerHTML = (msgs || []).length ? msgs.map(m => {
@@ -1527,6 +1667,8 @@ aplicaTemaSalvo();
 /* ---------- tela publica (sem login) ---------- */
 async function abrirPublico() {
   mostraTela("telaPublica");
+  $("pubRank").innerHTML = skelHtml(4, 46);
+  $("pubTarefas").innerHTML = skelHtml(5, 34);
   try {
     const [rank, tars] = await Promise.all([
       api("/rest/v1/vw_ranking?select=nome,apelido,pontos_total"),
@@ -1613,6 +1755,7 @@ async function chamaGerir(corpo) {
   return r;
 }
 async function adCarregaParticipantes() {
+  $("adLista").innerHTML = skelHtml(4, 46);
   try {
     const linhas = await api("/rest/v1/perfis?papel=eq.participante&select=id,nome,username&order=nome.asc");
     $("adLista").innerHTML = (linhas || []).length ? linhas.map(p =>
@@ -1696,6 +1839,61 @@ async function exportarXlsx() {
   } finally { btn.disabled = false; }
 }
 $("btnExportarXlsx").addEventListener("click", exportarXlsx);
+
+
+
+function skelHtml(n, alt) {
+  let h = "";
+  for (let i = 0; i < n; i++) h += '<div class="skel" style="height:' + (alt || 52) + 'px"></div>';
+  return h;
+}
+
+/* ================= NAVEGACAO INFERIOR (rodada 2) ================= */
+const SVGM = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
+const ITENS_MAIS = [
+  ["medidas", "Minhas Medidas", '<path d="M3 12h3l2-6l4 12l2-6h7"/>'],
+  ["metas", "Minhas Metas", '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8"/>'],
+  ["lembretes", "Lembretes", '<path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/>'],
+  ["regulamento", "Regulamento", '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/>'],
+  ["compartilhar", "Compartilhar no WhatsApp", '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/>'],
+  ["tema", "Tema escuro / claro", '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>'],
+  ["senha", "Trocar minha senha", '<rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>'],
+  ["admin", "Admin", '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8l1.2 2.7l2.9-.6l.6 2.9l2.7 1.2l-1.5 2.5l1.5 2.5l-2.7 1.2l-.6 2.9l-2.9-.6L12 21.2l-1.2-2.7l-2.9.6l-.6-2.9l-2.7-1.2l1.5-2.5l-1.5-2.5l2.7-1.2l.6-2.9l2.9.6Z"/>'],
+  ["sair", "Sair", '<path d="M14 4h5v16h-5"/><path d="M10 8l-4 4l4 4"/><path d="M6 12h10"/>']
+];
+function montaTelaMais() {
+  $("maisNome").textContent = perfil ? (perfil.apelido || perfil.nome) : "";
+  $("listaMais").innerHTML = ITENS_MAIS
+    .filter(([acao]) => acao !== "admin" || (perfil && perfil.papel === "admin"))
+    .map(([acao, rotulo, ic]) => `<button data-acao="${acao}">${SVGM(ic)}${rotulo}</button>`).join("");
+}
+function executaAcao(acao) {
+  if (acao === "meudia") mostraTela("telaMeuDia");
+  if (acao === "progresso") abrirProgresso();
+  if (acao === "turma") abrirTurma();
+  if (acao === "medidas") abrirMedidas();
+  if (acao === "metas") abrirMetas();
+  if (acao === "lembretes") abrirLembretes();
+  if (acao === "regulamento") abrirRegulamento();
+  if (acao === "compartilhar") compartilharCard();
+  if (acao === "tema") alternaTema();
+  if (acao === "admin") abrirAdmin();
+  if (acao === "senha") { limpaAviso("avisoSenha"); mostraTela("telaSenha"); }
+  if (acao === "sair") { apagaSessao(); mostraTela("telaLogin"); }
+}
+$("listaMais").addEventListener("click", ev => {
+  const btn = ev.target.closest("button[data-acao]");
+  if (btn) executaAcao(btn.dataset.acao);
+});
+$("tabbar").addEventListener("click", ev => {
+  const btn = ev.target.closest("button[data-tab]");
+  if (!btn) return;
+  const t = btn.dataset.tab;
+  if (t === "meudia") mostraTela("telaMeuDia");
+  if (t === "progresso") abrirProgresso();
+  if (t === "turma") abrirTurma();
+  if (t === "mais") { montaTelaMais(); mostraTela("telaMais"); }
+});
 
 /* ---------------- drawer (padrao do app Bolao SSGP) ---------------- */
 function fechaMenu() { document.body.classList.remove("menu-aberto"); }

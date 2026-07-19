@@ -3,7 +3,7 @@
 // (a casca do app). Dados da API nunca sao cacheados, para o conteudo
 // sempre refletir o estado real do banco.
 
-const CACHE = "mais-saude-v4";
+const CACHE = "mais-saude-v5";
 const ARQUIVOS = [
   "./",
   "./index.html",
@@ -32,7 +32,13 @@ self.addEventListener("fetch", (ev) => {
   // So intercepta arquivos do proprio site; API (outro dominio) passa direto.
   if (url.origin !== self.location.origin) return;
   ev.respondWith(
-    caches.match(ev.request).then((hit) => hit || fetch(ev.request))
+    caches.match(ev.request).then((hit) => hit || fetch(ev.request).then((resp) => {
+      if (resp && resp.ok && ev.request.method === "GET") {
+        const copia = resp.clone();
+        caches.open(CACHE).then((c) => c.put(ev.request, copia));
+      }
+      return resp;
+    }))
   );
 });
 
