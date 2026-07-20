@@ -711,6 +711,7 @@
   <div class="abas">
     <button id="abaLembretes" class="ativo">Lembretes</button>
     <button id="abaSenha">Trocar senha</button>
+    <button id="abaInstalar">Instalar app</button>
   </div>
   <div class="aba-painel ativo" id="painelLembretes">
   <div class="cartao">
@@ -732,6 +733,15 @@
     <div class="aviso" id="avisoLembrete"></div>
   </div>
 </div>
+  <div class="aba-painel" id="painelInstalar">
+    <div class="cartao">
+      <div id="instEstado" class="nota">Verificando este aparelho...</div>
+      <button class="botao" id="btnInstalar" style="display:none">Instalar o app agora</button>
+      <div id="instPassos"></div>
+      <div class="aviso" id="avisoInstalar"></div>
+      <p class="nota">Instalado, o app abre em tela cheia, com ícone próprio, e as notificações passam a funcionar também no iPhone.</p>
+    </div>
+  </div>
   <div class="aba-painel" id="painelSenha">
   <div class="cartao">
     <label for="novaSenha">Nova senha (mínimo 6 caracteres)</label>
@@ -806,7 +816,7 @@
 const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM";
 const FUNC_CADASTRO = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/clever-handler"; // endereco da funcao de cadastro
-const APP_VERSAO = "1.0.1"; // versao do app, exibida em Configuracoes e Sobre
+const APP_VERSAO = "1.1.0"; // versao do app, exibida em Configuracoes e Sobre
 const TENOR_KEY = ""; // opcional: chave gratuita do Tenor para busca de GIFs (roteiro explica); vazio = colar link do GIF
 const FUNC_LEMBRETES = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/enviar-lembretes"; // confira o endereco real na pagina da funcao
 const FUNC_GERIR = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/gerir-participante"; // funcao de gestao de participantes
@@ -2383,6 +2393,93 @@ function skelHtml(n, alt) {
 }
 
 
+
+/* ---------------- instalar o app (aba de Configuracoes) ---------------- */
+let promptInstalacao = null;
+window.addEventListener("beforeinstallprompt", (ev) => {
+  ev.preventDefault();            // guarda o convite para disparar no toque do botao
+  promptInstalacao = ev;
+  if ($("painelInstalar") && $("painelInstalar").classList.contains("ativo")) estadoInstalacao();
+});
+window.addEventListener("appinstalled", () => { promptInstalacao = null; estadoInstalacao(); });
+
+function appInstalado() {
+  return window.matchMedia("(display-mode: standalone)").matches ||
+         window.matchMedia("(display-mode: fullscreen)").matches ||
+         navigator.standalone === true;
+}
+function ehIOS() {
+  const ua = navigator.userAgent || "";
+  return /iPad|iPhone|iPod/.test(ua) ||
+         (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); // iPad recente
+}
+function navegadorEmbutido() {
+  const ua = navigator.userAgent || "";
+  return /FBAN|FBAV|FB_IAB|Instagram|WhatsApp|Line\/|Twitter|LinkedInApp|MicroMessenger/i.test(ua);
+}
+const PASSO = (n, txt) => `<div style="display:flex;gap:10px;align-items:flex-start;margin:9px 0">
+  <div style="min-width:24px;height:24px;border-radius:50%;background:var(--verde);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0">${n}</div>
+  <div style="font-size:var(--fs-corpo)">${txt}</div></div>`;
+
+function estadoInstalacao() {
+  const est = $("instEstado"), btn = $("btnInstalar"), passos = $("instPassos");
+  limpaAviso("avisoInstalar");
+  btn.style.display = "none";
+  passos.innerHTML = "";
+
+  if (appInstalado()) {
+    est.textContent = "✅ O app já está instalado neste aparelho. Você está usando a versão instalada.";
+    return;
+  }
+  if (navegadorEmbutido()) {
+    est.textContent = "Você abriu o app pelo navegador interno de outro aplicativo (WhatsApp, Instagram ou similar), e por ali a instalação não é permitida.";
+    passos.innerHTML =
+      PASSO(1, "Toque nos três pontinhos (ou no menu) no canto da tela.") +
+      PASSO(2, "Escolha <b>Abrir no navegador</b> (Chrome no Android, Safari no iPhone).") +
+      PASSO(3, "Já no navegador, volte a esta tela e a instalação fica disponível.");
+    return;
+  }
+  if (ehIOS()) {
+    est.textContent = "No iPhone e no iPad a instalação é feita em três toques, pelo próprio Safari:";
+    passos.innerHTML =
+      PASSO(1, "Toque no botão <b>Compartilhar</b>, o quadradinho com a seta para cima, na barra do Safari.") +
+      PASSO(2, "Role a lista e escolha <b>Adicionar à Tela de Início</b>.") +
+      PASSO(3, "Confirme em <b>Adicionar</b>. O ícone do desafio aparece na sua tela inicial.") +
+      '<p class="nota">Precisa ser pelo Safari e no iOS 16.4 ou mais novo. Depois de instalado, abra o app sempre pelo ícone: é assim que as notificações funcionam no iPhone.</p>';
+    return;
+  }
+  if (promptInstalacao) {
+    est.textContent = "Este aparelho pode instalar o app com um toque:";
+    btn.style.display = "";
+    return;
+  }
+  est.textContent = "A instalação automática não foi oferecida por este navegador. Dá para instalar pelo menu dele:";
+  passos.innerHTML =
+    PASSO(1, "Toque nos três pontinhos no canto do navegador.") +
+    PASSO(2, "Escolha <b>Instalar aplicativo</b> ou <b>Adicionar à tela inicial</b>.") +
+    PASSO(3, "Confirme. O ícone do desafio aparece junto dos seus outros apps.") +
+    '<p class="nota">Se não encontrar a opção, abra o app pelo Chrome e tente de novo.</p>';
+}
+
+$("btnInstalar").addEventListener("click", async () => {
+  if (!promptInstalacao) { estadoInstalacao(); return; }
+  const btn = $("btnInstalar");
+  btn.disabled = true;
+  try {
+    promptInstalacao.prompt();
+    const escolha = await promptInstalacao.userChoice;
+    promptInstalacao = null;
+    if (escolha && escolha.outcome === "accepted") {
+      aviso("avisoInstalar", "ok", "Instalação concluída. Procure o ícone do desafio na sua tela inicial.");
+    } else {
+      aviso("avisoInstalar", "erro", "Instalação cancelada. Você pode tentar de novo quando quiser.");
+    }
+    estadoInstalacao();
+  } catch (e) {
+    aviso("avisoInstalar", "erro", "Não foi possível abrir o instalador: " + e.message);
+  } finally { btn.disabled = false; }
+});
+
 /* ================= AJUSTES: header, config, historico ================= */
 const ICONE_SOL = '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.1 5.1l1.6 1.6M17.3 17.3l1.6 1.6M18.9 5.1l-1.6 1.6M6.7 17.3l-1.6 1.6"/>';
 const ICONE_LUA = '<path d="M20 13.5A8 8 0 0 1 10.5 4a8 8 0 1 0 9.5 9.5Z"/>';
@@ -2404,14 +2501,17 @@ function abrirConfig(aba) {
   if (!aba || aba === "lembretes") { montaDiasNovoLembrete(); estadoPush(); listaLembretes(); }
 }
 function trocaAbaConfig(qual) {
-  const lem = qual === "lembretes";
-  $("abaLembretes").classList.toggle("ativo", lem);
-  $("abaSenha").classList.toggle("ativo", !lem);
-  $("painelLembretes").classList.toggle("ativo", lem);
-  $("painelSenha").classList.toggle("ativo", !lem);
+  const abas = { lembretes: ["abaLembretes", "painelLembretes"], senha: ["abaSenha", "painelSenha"], instalar: ["abaInstalar", "painelInstalar"] };
+  Object.keys(abas).forEach(k => {
+    const [b, p] = abas[k];
+    $(b).classList.toggle("ativo", k === qual);
+    $(p).classList.toggle("ativo", k === qual);
+  });
+  if (qual === "instalar") estadoInstalacao();
 }
 $("abaLembretes").addEventListener("click", () => { trocaAbaConfig("lembretes"); montaDiasNovoLembrete(); estadoPush(); listaLembretes(); });
 $("abaSenha").addEventListener("click", () => { limpaAviso("avisoSenha"); trocaAbaConfig("senha"); });
+$("abaInstalar").addEventListener("click", () => trocaAbaConfig("instalar"));
 $("btnConfig").addEventListener("click", () => abrirConfig("lembretes"));
 
 /* Botao voltar do Android navega dentro do app, sem fechar */
