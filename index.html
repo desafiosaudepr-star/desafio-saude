@@ -426,14 +426,14 @@
 <body>
 
 <header id="topo" style="display:none">
-  <button class="btn-topo" id="btnConfig" aria-label="Configurações" title="Configurações">
-    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8l1.2 2.7l2.9-.6l.6 2.9l2.7 1.2l-1.5 2.5l1.5 2.5l-2.7 1.2l-.6 2.9l-2.9-.6L12 21.2l-1.2-2.7l-2.9.6l-.6-2.9l-2.7-1.2l1.5-2.5l-1.5-2.5l2.7-1.2l.6-2.9l2.9.6Z"/></svg>
-  </button>
+  <img src="icons/icone-192.png" alt="Início" id="logoHome" title="Ir para Meu Dia">
+  <div class="titulo">Desafio Mais Saúde<span class="subtitulo-topo">na Rotina Diária</span></div>
   <button class="btn-topo" id="btnTema" aria-label="Alternar tema" title="Tema claro ou escuro">
     <svg id="iconeTema" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
   </button>
-  <img src="icons/icone-192.png" alt="Início" id="logoHome" title="Ir para Meu Dia">
-  <div class="titulo">Desafio Mais Saúde<span class="subtitulo-topo">na Rotina Diária</span></div>
+  <button class="btn-topo" id="btnConfig" aria-label="Configurações" title="Configurações">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8l1.2 2.7l2.9-.6l.6 2.9l2.7 1.2l-1.5 2.5l1.5 2.5l-2.7 1.2l-.6 2.9l-2.9-.6L12 21.2l-1.2-2.7l-2.9.6l-.6-2.9l-2.7-1.2l1.5-2.5l-1.5-2.5l2.7-1.2l.6-2.9l2.9.6Z"/></svg>
+  </button>
   <button class="btn-menu" id="btnMenu" aria-label="Abrir menu"><span></span><span></span><span></span></button>
 </header>
 
@@ -806,7 +806,7 @@
 const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM";
 const FUNC_CADASTRO = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/clever-handler"; // endereco da funcao de cadastro
-const APP_VERSAO = "1.0.0"; // versao do app, exibida em Configuracoes e Sobre
+const APP_VERSAO = "1.0.1"; // versao do app, exibida em Configuracoes e Sobre
 const TENOR_KEY = ""; // opcional: chave gratuita do Tenor para busca de GIFs (roteiro explica); vazio = colar link do GIF
 const FUNC_LEMBRETES = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/enviar-lembretes"; // confira o endereco real na pagina da funcao
 const FUNC_GERIR = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/gerir-participante"; // funcao de gestao de participantes

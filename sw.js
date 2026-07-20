@@ -3,7 +3,7 @@
 // (a casca do app). Dados da API nunca sao cacheados, para o conteudo
 // sempre refletir o estado real do banco.
 
-const CACHE = "mais-saude-v9";
+const CACHE = "mais-saude-v10";
 const ARQUIVOS = [
   "./",
   "./index.html",
