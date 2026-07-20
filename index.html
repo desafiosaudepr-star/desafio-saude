@@ -381,13 +381,58 @@
   .emoji-fila { max-height: 132px; overflow-y: auto; }
   .bolha .gif { max-width: 220px; width: 100%; border-radius: 12px; display: block; margin: 4px 0 6px; }
   #gifGrade img { width: 100%; height: 84px; object-fit: cover; border-radius: 10px; cursor: pointer; }
+
+  /* ---------- ajustes: header, tema escuro ---------- */
+  .btn-topo {
+    width: 38px; height: 38px; flex-shrink: 0; border: none; background: transparent;
+    border-radius: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--verde-escuro); padding: 7px;
+  }
+  .btn-topo svg { width: 22px; height: 22px; stroke: currentColor; }
+  .btn-topo:hover { background: rgba(168,224,197,0.35); }
+  body.tema-escuro .btn-topo { color: var(--menta); }
+  body.tema-escuro .btn-topo:hover { background: rgba(168,224,197,0.14); }
+  #logoHome { cursor: pointer; }
+
+  /* fundo: no escuro, esmaecer e escurecer o suficiente para o texto respirar */
+  body.tema-escuro::before { opacity: 0.16; filter: saturate(0.55) brightness(0.75); }
+  body.tema-escuro::after { background: linear-gradient(180deg, rgba(16,24,21,0.72), rgba(16,24,21,0.88)); }
+
+  /* icones das tarefas: no escuro, fundo escuro e traco claro */
+  body.tema-escuro .tarefa .icone { background: rgba(255,255,255,0.07) !important; }
+  body.tema-escuro .tarefa .icone svg { stroke: var(--menta); }
+  body.tema-escuro .tarefa.marcada.g1 .icone { background: rgba(168,224,197,0.20) !important; }
+  body.tema-escuro .tarefa.marcada.g2 .icone { background: rgba(246,169,107,0.22) !important; }
+  body.tema-escuro .tarefa.marcada.g2 .icone svg { stroke: var(--pessego); }
+  body.tema-escuro .cartao, body.tema-escuro .tarefa, body.tema-escuro .mini-card,
+  body.tema-escuro .rank-item, body.tema-escuro .bolha, body.tema-escuro .grafico-caixa,
+  body.tema-escuro .saldo-card, body.tema-escuro .part-linha, body.tema-escuro .mural-cab {
+    background: rgba(20, 31, 26, 0.88);
+  }
+  body.tema-escuro .tabbar, body.tema-escuro header { background: rgba(18, 28, 23, 0.94); }
+
+  .dg-card { display: flex; align-items: center; gap: 14px; background: var(--vidro); border: 1px solid rgba(255,255,255,0.45); border-radius: 16px; padding: 15px 16px; margin-bottom: 10px; box-shadow: 0 12px 32px -4px rgba(46,58,52,0.05); }
+  body.tema-escuro .dg-card { background: rgba(20,31,26,0.88); border-color: rgba(255,255,255,0.08); }
+  .dg-card .dg-ic { width: 44px; height: 44px; border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .dg-card .dg-ic svg { width: 22px; height: 22px; stroke: var(--verde-escuro); }
+  body.tema-escuro .dg-card .dg-ic { background: rgba(255,255,255,0.07) !important; }
+  body.tema-escuro .dg-card .dg-ic svg { stroke: var(--menta); }
+  .dg-card .dg-val { font-family: 'Nunito'; font-weight: 800; font-size: 1.28rem; color: var(--verde-escuro); line-height: 1.15; }
+  body.tema-escuro .dg-card .dg-val { color: var(--menta); }
+  .dg-card .dg-rot { font-size: var(--fs-peq); color: var(--texto-suave); }
   @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 
 <header id="topo" style="display:none">
-  <img src="icons/icone-192.png" alt="">
+  <button class="btn-topo" id="btnConfig" aria-label="Configurações" title="Configurações">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8l1.2 2.7l2.9-.6l.6 2.9l2.7 1.2l-1.5 2.5l1.5 2.5l-2.7 1.2l-.6 2.9l-2.9-.6L12 21.2l-1.2-2.7l-2.9.6l-.6-2.9l-2.7-1.2l1.5-2.5l-1.5-2.5l2.7-1.2l.6-2.9l2.9.6Z"/></svg>
+  </button>
+  <button class="btn-topo" id="btnTema" aria-label="Alternar tema" title="Tema claro ou escuro">
+    <svg id="iconeTema" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+  </button>
+  <img src="icons/icone-192.png" alt="Início" id="logoHome" title="Ir para Meu Dia">
   <div class="titulo">Desafio Mais Saúde<span class="subtitulo-topo">na Rotina Diária</span></div>
   <button class="btn-menu" id="btnMenu" aria-label="Abrir menu"><span></span><span></span><span></span></button>
 </header>
@@ -454,18 +499,7 @@
 </section>
 
 <!-- TROCAR SENHA -->
-<section class="tela" id="telaSenha">
-  <div class="cartao">
-    <h2 style="color:var(--verde-escuro);margin-top:0">Trocar minha senha</h2>
-    <label for="novaSenha">Nova senha (mínimo 6 caracteres)</label>
-    <input id="novaSenha" type="password" autocomplete="new-password">
-    <label for="novaSenha2">Repita a nova senha</label>
-    <input id="novaSenha2" type="password" autocomplete="new-password">
-    <button class="botao" id="btnTrocarSenha">Salvar nova senha</button>
-    <button class="botao secundario" id="btnVoltarSenha">Voltar</button>
-    <div class="aviso" id="avisoSenha"></div>
-  </div>
-</section>
+
 
 <!-- MEU DIA -->
 <section class="tela" id="telaMeuDia">
@@ -510,6 +544,9 @@
   <div class="grafico-caixa"><canvas id="graficoPosicaoDia" height="200"></canvas></div>
   <div class="secao-titulo">Minha pontuação por dia</div>
   <div class="grafico-caixa"><canvas id="graficoPontosDia" height="200"></canvas></div>
+  <div class="secao-titulo">Minhas medidas ao longo do tempo</div>
+  <div class="grafico-caixa"><canvas id="graficoMedidas" height="200"></canvas></div>
+  <div class="nota" id="notaMedidas" style="margin:-8px 4px 14px">Registre em Minhas Medidas para ver a evolução aqui. Esta seção é privada.</div>
   <div class="secao-titulo">Meus indicadores</div>
   <div class="lista-ind" id="pgIndividuais"></div>
   <div class="secao-titulo">Minha adesão por tarefa</div>
@@ -524,11 +561,20 @@
 <section class="tela" id="telaTurma">
   <div class="saudacao"><h2>A turma</h2><p id="turmaPeriodo"></p></div>
 
-  <div id="muralBloco">
-    <button class="mural-cab" id="muralCab">
-      💬 Mural da turma <span class="cont" id="muralCont">0</span> <span class="seta">▾</span>
-    </button>
-    <div class="mural-corpo">
+  <div class="abas">
+    <button id="abaRanking" class="ativo">Ranking</button>
+    <button id="abaMural">Mural <span class="cont" id="muralCont">0</span></button>
+  </div>
+
+  <div class="aba-painel ativo" id="painelRanking">
+    <div class="secao-titulo" style="display:flex;align-items:center;margin-top:6px">Classificação <button class="btn-mini" id="btnAtualizaRank" style="margin-left:auto">atualizar</button></div>
+    <div id="rankLista"></div>
+    <button class="botao secundario" id="btnVerDesempenho">Ver desempenho geral da turma</button>
+  </div>
+
+  <div class="aba-painel" id="painelMural">
+    <div id="muralBloco" class="mural-aberto">
+      <div class="mural-corpo">
       <div id="muralLista"></div>
       <div class="mural-envio">
         <input id="muralTexto" maxlength="100" placeholder="Deixe um recado para a turma">
@@ -538,6 +584,8 @@
       <div class="emoji-fila" id="muralEmojis"></div>
       <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
         <button class="btn-mini" id="btnGif" style="border:1px solid rgba(76,175,125,0.35);border-radius:10px">GIF</button>
+        <button class="btn-mini" id="btnFoto" style="border:1px solid rgba(76,175,125,0.35);border-radius:10px">Foto</button>
+        <input type="file" id="arqFoto" accept="image/*" style="display:none">
         <div class="contador-car" style="flex:1;margin-top:0"><span id="muralChars">0</span>/100</div>
       </div>
       <div id="gifPainel" style="display:none;margin-top:8px">
@@ -548,11 +596,9 @@
         <div id="gifGrade" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px"></div>
       </div>
       <div class="aviso" id="avisoMural"></div>
+      </div>
     </div>
   </div>
-
-  <div class="secao-titulo" style="display:flex;align-items:center">Ranking <button class="btn-mini" id="btnAtualizaRank" style="margin-left:auto">atualizar</button></div>
-  <div id="rankLista"></div>
 </section>
 
 <!-- MINHAS MEDIDAS -->
@@ -605,27 +651,7 @@
 </section>
 
 <!-- LEMBRETES -->
-<section class="tela" id="telaLembretes">
-  <div class="saudacao"><h2>Lembretes</h2><p>Receba um aviso no celular para não esquecer de lançar o dia.</p></div>
-  <div class="cartao">
-    <div id="pushEstado" class="nota">Verificando este aparelho...</div>
-    <button class="botao" id="btnAtivarPush">Ativar notificações neste aparelho</button>
-    <button class="botao secundario" id="btnTestePush">Enviar notificação de teste agora</button>
-    <div class="aviso" id="avisoPush"></div>
-    <p class="nota">No iPhone, as notificações só funcionam com o app instalado na tela de início (Safari, botão Compartilhar, Adicionar à Tela de Início) e no iOS 16.4 ou mais novo. A entrega pode atrasar em alguns aparelhos Android por economia de bateria.</p>
-  </div>
-  <div class="secao-titulo">Meus horários</div>
-  <div id="listaLembretes"></div>
-  <div class="cartao">
-    <label for="lbHora">Novo lembrete</label>
-    <input id="lbHora" type="time" value="20:00">
-    <label for="lbMsg">Mensagem do aviso (opcional)</label>
-    <input id="lbMsg" maxlength="90" placeholder="Ex.: Bora lançar o dia! 🌱">
-    <div class="emoji-fila" id="lbDias" style="margin-top:10px"></div>
-    <button class="botao" id="btnAddLembrete">Adicionar lembrete</button>
-    <div class="aviso" id="avisoLembrete"></div>
-  </div>
-</section>
+
 
 <!-- ADMIN -->
 <section class="tela" id="telaAdmin">
@@ -641,6 +667,8 @@
     <button class="botao" id="btnAdCadastrar">Cadastrar</button>
     <div class="aviso" id="avisoAdCad"></div>
   </div>
+  <div class="secao-titulo">Frequência da turma</div>
+  <div id="adFrequencia"></div>
   <div class="secao-titulo">Participantes</div>
   <div id="adLista"></div>
   <div class="cartao">
@@ -666,6 +694,58 @@
 </section>
 
 
+
+
+<!-- DESEMPENHO GERAL DA TURMA -->
+<section class="tela" id="telaDesempenho">
+  <div class="saudacao"><h2>Desempenho geral</h2><p>O que a turma somou até aqui, sem nomes.</p></div>
+  <div id="dgCards"></div>
+  <div class="secao-titulo">Tarefas que a turma mais cumpre</div>
+  <div id="dgTarefas"></div>
+  <button class="botao secundario" id="btnDgVoltar">Voltar para a turma</button>
+</section>
+
+<!-- CONFIGURACOES -->
+<section class="tela" id="telaConfig">
+  <div class="saudacao"><h2>Configurações</h2><p id="configNome"></p></div>
+  <div class="abas">
+    <button id="abaLembretes" class="ativo">Lembretes</button>
+    <button id="abaSenha">Trocar senha</button>
+  </div>
+  <div class="aba-painel ativo" id="painelLembretes">
+  <div class="cartao">
+    <div id="pushEstado" class="nota">Verificando este aparelho...</div>
+    <button class="botao" id="btnAtivarPush">Ativar notificações neste aparelho</button>
+    <button class="botao secundario" id="btnTestePush">Enviar notificação de teste agora</button>
+    <div class="aviso" id="avisoPush"></div>
+    <p class="nota">No iPhone, as notificações só funcionam com o app instalado na tela de início (Safari, botão Compartilhar, Adicionar à Tela de Início) e no iOS 16.4 ou mais novo. A entrega pode atrasar em alguns aparelhos Android por economia de bateria.</p>
+  </div>
+  <div class="secao-titulo">Meus horários</div>
+  <div id="listaLembretes"></div>
+  <div class="cartao">
+    <label for="lbHora">Novo lembrete</label>
+    <input id="lbHora" type="time" value="20:00">
+    <label for="lbMsg">Mensagem do aviso (opcional)</label>
+    <input id="lbMsg" maxlength="90" placeholder="Ex.: Bora lançar o dia! 🌱">
+    <div class="emoji-fila" id="lbDias" style="margin-top:10px"></div>
+    <button class="botao" id="btnAddLembrete">Adicionar lembrete</button>
+    <div class="aviso" id="avisoLembrete"></div>
+  </div>
+</div>
+  <div class="aba-painel" id="painelSenha">
+  <div class="cartao">
+    <label for="novaSenha">Nova senha (mínimo 6 caracteres)</label>
+    <input id="novaSenha" type="password" autocomplete="new-password">
+    <label for="novaSenha2">Repita a nova senha</label>
+    <input id="novaSenha2" type="password" autocomplete="new-password">
+    <button class="botao" id="btnTrocarSenha">Salvar nova senha</button>
+    <button class="botao secundario" id="btnVoltarSenha">Voltar</button>
+    <div class="aviso" id="avisoSenha"></div>
+  </div>
+</div>
+  <p class="nota" style="text-align:center;margin-top:18px">Desafio Mais Saúde, versão <span id="verApp"></span></p>
+</section>
+
 <!-- SOBRE O APP -->
 <section class="tela" id="telaSobre">
   <div class="saudacao"><h2>Sobre o app</h2><p>Desafio Mais Saúde · na Rotina Diária</p></div>
@@ -687,6 +767,7 @@
     <h4>Vencedor</h4>
     <p>Vence quem tiver a maior pontuação acumulada ao final. O prêmio é surpresa!</p>
     <p class="nota">Feito com carinho para a nossa turma. Tecnologia: aplicativo web instalável (PWA) com banco seguro na nuvem.</p>
+    <p class="nota">Versão <span id="verAppSobre"></span></p>
   </div>
   <button class="botao secundario" id="btnSobreVoltar" style="display:none">Voltar</button>
 </section>
@@ -725,6 +806,7 @@
 const SUPABASE_URL = "https://eqxsioogpsbkrrbmtjfn.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxeHNpb29ncHNia3JyYm10amZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxNTg1NjIsImV4cCI6MjA5OTczNDU2Mn0.L1XGxhiq8Q_5W-IyyHl9IL6xMjao90XuS0MsNtMWaFM";
 const FUNC_CADASTRO = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/clever-handler"; // endereco da funcao de cadastro
+const APP_VERSAO = "1.0.0"; // versao do app, exibida em Configuracoes e Sobre
 const TENOR_KEY = ""; // opcional: chave gratuita do Tenor para busca de GIFs (roteiro explica); vazio = colar link do GIF
 const FUNC_LEMBRETES = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/enviar-lembretes"; // confira o endereco real na pagina da funcao
 const FUNC_GERIR = "https://eqxsioogpsbkrrbmtjfn.supabase.co/functions/v1/gerir-participante"; // funcao de gestao de participantes
@@ -732,6 +814,7 @@ const VAPID_PUBLIC = "BFnNxgNHnFaACuuX0uGSazJ_y4UcdldUESzyAa_v1Tzmx_CBSTbQuJSaQ-
 /* ===================================================================== */
 
 const SVGT = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke="#2f7d55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:20px;height:20px">' + d + '</svg>';
+// no tema escuro o traco e a cor de fundo dos icones sao trocados por CSS
 const ICONES_TEMA = {
   "1": SVGT('<path d="M20 13.5A8 8 0 0 1 10.5 4a8 8 0 1 0 9.5 9.5Z"/>'),
   "2": SVGT('<path d="M12 8q-5-4-6 2q-0.8 6 6 10q6.8-4 6-10q-1-6-6-2Z"/><path d="M12 8q0.4-2.4 2.6-3.6"/>'),
@@ -752,7 +835,7 @@ let diaSelecionado = null;
 /* ---------------- utilidades ---------------- */
 function $(id) { return document.getElementById(id); }
 const TAB_POR_TELA = { telaMeuDia: "tabMeudia", telaProgresso: "tabProgresso", telaTurma: "tabTurma", telaMais: "tabMais",
-  telaMedidas: "tabMais", telaMetas: "tabMais", telaLembretes: "tabMais", telaRegulamento: "tabMais", telaSobre: "tabMais", telaAdmin: "tabMais", telaSenha: "tabMais" };
+  telaMedidas: "tabMais", telaMetas: "tabMais", telaLembretes: "tabMais", telaRegulamento: "tabMais", telaSobre: "tabMais", telaConfig: "tabMais", telaDesempenho: "tabTurma", telaAdmin: "tabMais", telaSenha: "tabMais" };
 function mostraTela(id) {
   document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
   $(id).classList.add("ativa");
@@ -770,6 +853,7 @@ function mostraTela(id) {
   const tab = TAB_POR_TELA[id];
   if (tab && comTab) $(tab).classList.add("ativo");
   window.scrollTo(0, 0);
+  if (typeof registraHistorico === "function") registraHistorico(id);
 }
 function aviso(id, tipo, txt) {
   const el = $(id);
@@ -1142,6 +1226,7 @@ async function abrirProgresso() {
     desenhaVs(uid);
     desenhaPosicaoDia(uid);
     desenhaPontosDia(uid, meusPorDia);
+    desenhaMedidas();
 
     $("pgIndividuais").innerHTML = (indInd || []).length
       ? indInd.map(i => `<div class="pilula"><b>${fmtNum(i.total)} ${i.unidade}</b> ${i.descricao}</div>`).join("")
@@ -1199,6 +1284,51 @@ function desenhaEvolucao(uid) {
   });
 }
 
+
+
+/* ---------- evolucao das medidas (privado) ---------- */
+let graficoMed = null;
+async function desenhaMedidas() {
+  if (!graficoDisponivel()) return;
+  try {
+    const linhas = await api("/rest/v1/medidas_pessoais?user_id=eq." + sessao.user.id +
+      "&select=data,peso_kg,gordura_pct,massa_magra_kg&order=data.asc&limit=200");
+    const dados = (linhas || []).filter(m => m.peso_kg != null || m.gordura_pct != null || m.massa_magra_kg != null);
+    if (dados.length < 2) {
+      $("notaMedidas").textContent = dados.length === 1
+        ? "Você tem 1 registro. Com 2 ou mais, o gráfico da evolução aparece aqui. Esta seção é privada."
+        : "Registre em Minhas Medidas para ver a evolução aqui. Esta seção é privada.";
+      $("graficoMedidas").style.display = "none";
+      if (graficoMed) { graficoMed.destroy(); graficoMed = null; }
+      return;
+    }
+    $("graficoMedidas").style.display = "";
+    $("notaMedidas").textContent = "Só você vê estes dados.";
+    const rotulos = dados.map(m => fmtDia(m.data));
+    const serie = (campo, nome, cor) => ({
+      label: nome,
+      data: dados.map(m => m[campo] != null ? Number(m[campo]) : null),
+      borderColor: cor, backgroundColor: cor,
+      borderWidth: 2.5, pointRadius: 2, tension: 0.25, spanGaps: true,
+      hidden: dados.every(m => m[campo] == null)
+    });
+    const datasets = [
+      serie("peso_kg", "Peso (kg)", "#2f7d55"),
+      serie("gordura_pct", "Gordura (%)", "#F6A96B"),
+      serie("massa_magra_kg", "Massa magra (kg)", "#5FC5D6")
+    ].filter(d => !d.hidden);
+    if (graficoMed) graficoMed.destroy();
+    graficoMed = new Chart($("graficoMedidas"), {
+      type: "line",
+      data: { labels: rotulos, datasets },
+      options: {
+        animation: false, responsive: true,
+        plugins: { legend: { position: "top", labels: { boxWidth: 12, font: { size: 10 } } } },
+        scales: { x: { grid: { display: false } } }
+      }
+    });
+  } catch { /* medidas sao privadas e opcionais: falha silenciosa */ }
+}
 
 /* ---------- desempenho diario: posicao no ranking e pontuacao ---------- */
 let graficoPosDia = null, graficoPtsDia = null;
@@ -1315,6 +1445,7 @@ function desenhaAdesao(meus) {
 /* ---------------- TURMA: RANKING + MURAL ---------------- */
 async function abrirTurma() {
   mostraTela("telaTurma");
+  trocaAbaTurma("ranking");
   await garanteBase();
   if (desafio) $("turmaPeriodo").textContent = "Edição de " + fmtDia(desafio.data_inicio) + " a " + fmtDia(desafio.data_fim);
   await Promise.all([carregaRanking(), carregaMural()]);
@@ -1345,7 +1476,6 @@ async function carregaRanking() {
 }
 $("btnAtualizaRank").addEventListener("click", () => { carregaRanking(); carregaMural(); });
 
-$("muralCab").addEventListener("click", () => $("muralBloco").classList.toggle("mural-aberto"));
 let emojiCatAtiva = 0;
 function montaEmojis() {
   $("emojiAbas").innerHTML = EMOJI_CATS.map((c, i) =>
@@ -1405,6 +1535,132 @@ async function carregaMural() {
 }
 function escapaHtml(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
 
+
+
+
+/* ---------------- desempenho geral da turma ---------------- */
+function fmtHoras(min) {
+  const h = min / 60;
+  return h >= 10 ? Math.round(h) : (Math.round(h * 10) / 10).toString().replace(".", ",");
+}
+async function abrirDesempenho() {
+  mostraTela("telaDesempenho");
+  $("dgCards").innerHTML = skelHtml(5, 74);
+  $("dgTarefas").innerHTML = skelHtml(4, 30);
+  await garanteBase();
+  try {
+    const [col, tarGrupo, rank] = await Promise.all([
+      api("/rest/v1/vw_indicadores_quantidade_coletivo?select=codigo,unidade,total_grupo"),
+      api("/rest/v1/vw_tarefas_cumpridas_coletivo?select=codigo,descricao,grupo,cumprimentos,taxa_adesao_pct"),
+      api("/rest/v1/vw_ranking?select=user_id")
+    ]);
+    const por = {};
+    (col || []).forEach(i => por[i.codigo] = Number(i.total_grupo || 0));
+
+    // % de tarefas cumpridas: cumprimentos das tarefas que pontuam sobre o total possivel
+    const positivas = tarefas.filter(t => t.valor_ponto === 1);
+    const cumpridasPos = (tarGrupo || [])
+      .filter(t => positivas.some(p => p.codigo === t.codigo))
+      .reduce((a, t) => a + Number(t.cumprimentos || 0), 0);
+    const dias = diasDoPeriodo().length;
+    const possivel = (rank || []).length * dias * positivas.length;
+    const pct = possivel > 0 ? Math.round(100 * cumpridasPos / possivel) : 0;
+
+    const IC = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
+    const cards = [
+      [por["3.1"] ? fmtNum(por["3.1"]) + " L" : "0 L", "de água que a turma bebeu", "rgba(95,197,214,0.28)", '<path d="M12 3q6 7.2 6 11a6 6 0 0 1-12 0q0-3.8 6-11Z"/>'],
+      [(por["4.1"] ? fmtHoras(por["4.1"]) : "0") + " h", "de atividade física", "rgba(246,169,107,0.3)", '<circle cx="14" cy="4.5" r="1.8"/><path d="M9 20l2.2-5L8 12l3-4l4 2.5l3-1"/><path d="M8 12l-3.5 1"/>'],
+      ["Mais de " + (por["5.2"] ? fmtHoras(por["5.2"]) : "0") + " h", "de lazer sem tela", "rgba(246,208,107,0.35)", '<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M4 4l16 16"/>'],
+      ["Mais de " + (por["6.1"] ? fmtNum(por["6.1"]) : "0") + " h", "de sono saudável", "rgba(95,197,214,0.22)", '<path d="M20 13.5A8 8 0 0 1 10.5 4a8 8 0 1 0 9.5 9.5Z"/>'],
+      [pct + "%", "das tarefas do desafio cumpridas", "rgba(168,224,197,0.5)", '<path d="M9 11l3 3l8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/>']
+    ];
+    $("dgCards").innerHTML = cards.map(([v, r, bg, ic]) =>
+      `<div class="dg-card"><div class="dg-ic" style="background:${bg}">${IC(ic)}</div>
+       <div><div class="dg-val">${v}</div><div class="dg-rot">${r}</div></div></div>`).join("");
+
+    const tg = (tarGrupo || []).filter(t => t.grupo === 1 && t.cumprimentos > 0)
+      .sort((a, b) => b.cumprimentos - a.cumprimentos);
+    $("dgTarefas").innerHTML = tg.length
+      ? tg.map(t => `<div class="linha-tarefa"><span>${t.descricao}</span><span class="pct">${t.cumprimentos}x</span></div>`).join("")
+      : '<div class="nota">Ainda sem registros suficientes.</div>';
+  } catch (e) {
+    $("dgCards").innerHTML = '<div class="nota">Erro ao carregar: ' + e.message + '</div>';
+    $("dgTarefas").innerHTML = "";
+  }
+}
+$("btnVerDesempenho").addEventListener("click", abrirDesempenho);
+$("btnDgVoltar").addEventListener("click", () => abrirTurma());
+
+/* ---------------- abas da tela Turma ---------------- */
+function trocaAbaTurma(qual) {
+  const rank = qual === "ranking";
+  $("abaRanking").classList.toggle("ativo", rank);
+  $("abaMural").classList.toggle("ativo", !rank);
+  $("painelRanking").classList.toggle("ativo", rank);
+  $("painelMural").classList.toggle("ativo", !rank);
+}
+$("abaRanking").addEventListener("click", () => { trocaAbaTurma("ranking"); carregaRanking(); });
+$("abaMural").addEventListener("click", () => { trocaAbaTurma("mural"); carregaMural(); });
+
+/* ---------------- foto no mural ---------------- */
+$("btnFoto").addEventListener("click", () => $("arqFoto").click());
+$("arqFoto").addEventListener("change", async (ev) => {
+  const arq = ev.target.files && ev.target.files[0];
+  ev.target.value = "";
+  if (!arq) return;
+  limpaAviso("avisoMural");
+  const agora = Date.now();
+  if (agora - ultimaMsgMural < 60000) {
+    aviso("avisoMural", "erro", "Aguarde " + Math.ceil((60000 - (agora - ultimaMsgMural)) / 1000) + "s para postar de novo.");
+    return;
+  }
+  aviso("avisoMural", "ok", "Enviando foto...");
+  try {
+    const blob = await comprimeImagem(arq, 1080, 0.72);
+    const nome = sessao.user.id + "/" + Date.now() + ".jpg";
+    const resp = await fetch(SUPABASE_URL + "/storage/v1/object/mural/" + nome, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_ANON,
+        "Authorization": "Bearer " + sessao.access_token,
+        "Content-Type": "image/jpeg",
+        "x-upsert": "true"
+      },
+      body: blob
+    });
+    if (!resp.ok) {
+      const t = await resp.text();
+      throw new Error(t.slice(0, 200) || ("HTTP " + resp.status));
+    }
+    const url = SUPABASE_URL + "/storage/v1/object/public/mural/" + nome;
+    await api("/rest/v1/mural", { method: "POST", headers: { "Prefer": "return=minimal" },
+      body: JSON.stringify({ autor_id: sessao.user.id, mensagem: "[FOTO]", gif_url: url }) });
+    ultimaMsgMural = agora;
+    limpaAviso("avisoMural");
+    await carregaMural();
+  } catch (e) {
+    aviso("avisoMural", "erro", "Não foi possível enviar a foto: " + e.message);
+  }
+});
+function comprimeImagem(arquivo, maxLado, qualidade) {
+  return new Promise((res, rej) => {
+    const img = new Image();
+    const leitor = new FileReader();
+    leitor.onload = () => { img.src = leitor.result; };
+    leitor.onerror = () => rej(new Error("Falha ao ler o arquivo"));
+    img.onload = () => {
+      let { width: w, height: h } = img;
+      const escala = Math.min(1, maxLado / Math.max(w, h));
+      w = Math.round(w * escala); h = Math.round(h * escala);
+      const cv = document.createElement("canvas");
+      cv.width = w; cv.height = h;
+      cv.getContext("2d").drawImage(img, 0, 0, w, h);
+      cv.toBlob(b => b ? res(b) : rej(new Error("Falha ao processar a imagem")), "image/jpeg", qualidade);
+    };
+    img.onerror = () => rej(new Error("Arquivo de imagem inválido"));
+    leitor.readAsDataURL(arquivo);
+  });
+}
 
 /* ---------------- GIFs no mural ---------------- */
 $("btnGif").addEventListener("click", async () => {
@@ -1630,7 +1886,8 @@ function abParaB64url(buf) {
 
 /* ---------------- LEMBRETES ---------------- */
 async function abrirLembretes() {
-  mostraTela("telaLembretes");
+  abrirConfig("lembretes");
+  if (false) mostraTela("telaConfig");
   montaDiasNovoLembrete();
   await Promise.all([estadoPush(), listaLembretes()]);
 }
@@ -1923,7 +2180,7 @@ async function abrirPublico() {
   }
 }
 
-function abrirSobre() { mostraTela("telaSobre"); }
+function abrirSobre() { $("verAppSobre").textContent = APP_VERSAO; mostraTela("telaSobre"); }
 $("btnPubSobre").addEventListener("click", abrirSobre);
 $("btnPubRegul").addEventListener("click", abrirRegulamento);
 $("btnSobreVoltar").addEventListener("click", () => mostraTela("telaPublica"));
@@ -1942,6 +2199,19 @@ async function compartilharCard() {
     const meu = cacheRanking.find(r => r.user_id === uid);
     const pontos = meu ? meu.pontos_total : 0;
     const streakTxt = $("pgStreak") ? $("pgStreak").textContent : "0";
+    let cumpriuHoje = false;
+    try {
+      const hoje = hojeISO();
+      const marc = marcadosPorDia[hoje];
+      if (marc && marc.size) {
+        let saldo = 0;
+        tarefas.forEach(t => { if (marc.has(t.id)) saldo += t.valor_ponto; });
+        cumpriuHoje = saldo > 0;
+      } else {
+        const r2 = await api("/rest/v1/vw_saldo_diario?user_id=eq." + uid + "&data=eq." + hoje + "&select=saldo_dia");
+        cumpriuHoje = !!(r2 && r2[0] && r2[0].saldo_dia > 0);
+      }
+    } catch {}
 
     const cv = document.createElement("canvas");
     cv.width = 800; cv.height = 800;
@@ -1961,12 +2231,17 @@ async function compartilharCard() {
     cx.fillText(String(pontos), 400, 420);
     cx.font = "600 34px Inter, Arial";
     cx.fillText("pontos", 400, 470);
-    cx.font = "700 40px Nunito, Arial";
-    cx.fillText((pos > 0 ? pos + "º lugar" : "") + (Number(streakTxt) > 0 ? "  ·  🔥 " + streakTxt + " dias" : ""), 400, 560);
+    cx.font = "700 38px Nunito, Arial";
+    cx.fillText(cumpriuHoje ? "Hoje eu cumpri a minha meta!" : "Seguindo firme no desafio!", 400, 560);
+    if (Number(streakTxt) > 0) {
+      cx.font = "600 30px Inter, Arial";
+      cx.fillText("🔥 " + streakTxt + " dias seguidos", 400, 606);
+    }
     cx.font = "600 26px Inter, Arial";
     cx.fillText(meu ? (meu.apelido || meu.nome) : "", 400, 640);
 
-    const texto = "Estou no Desafio Mais Saúde! " + pontos + " pontos" + (pos > 0 ? ", " + pos + "º lugar" : "") + " 🌱💪";
+    const texto = (cumpriuHoje ? "Hoje eu cumpri a minha meta no Desafio Mais Saúde e já fiz " : "Estou no Desafio Mais Saúde e já fiz ")
+      + pontos + " pontos! 🌱💪";
     const blob = await new Promise(res => cv.toBlob(res, "image/png"));
     const arquivo = new File([blob], "desafio-mais-saude.png", { type: "image/png" });
     if (navigator.canShare && navigator.canShare({ files: [arquivo] })) {
@@ -1992,18 +2267,39 @@ async function chamaGerir(corpo) {
   if (!resp.ok) throw new Error(r && (r.erro || r.message) || ("HTTP " + resp.status));
   return r;
 }
+function diasDesde(iso) {
+  return Math.floor((new Date(hojeISO() + "T00:00:00") - new Date(iso + "T00:00:00")) / 86400000);
+}
 async function adCarregaParticipantes() {
   $("adLista").innerHTML = skelHtml(4, 46);
   try {
-    const linhas = await api("/rest/v1/perfis?papel=eq.participante&select=id,nome,username&order=nome.asc");
-    $("adLista").innerHTML = (linhas || []).length ? linhas.map(p =>
-      `<div class="part-linha">
-        <div class="pn">${p.nome}<small>usuário: ${p.username}</small></div>
+    const desde = (() => { const d = new Date(); d.setDate(d.getDate() - 60); return dataLocalISO(d); })();
+    const [linhas, lanc] = await Promise.all([
+      api("/rest/v1/perfis?papel=eq.participante&select=id,nome,username&order=nome.asc"),
+      api("/rest/v1/lancamentos?marcado=eq.true&data=gte." + desde + "&select=user_id,data&order=data.desc")
+    ]);
+    const ultimo = {};
+    (lanc || []).forEach(l => { if (!ultimo[l.user_id] || l.data > ultimo[l.user_id]) ultimo[l.user_id] = l.data; });
+    const inativos = (linhas || []).filter(p => !ultimo[p.id] || diasDesde(ultimo[p.id]) > 2).length;
+    $("adFrequencia").innerHTML = (linhas || []).length
+      ? `<div class="dg-card"><div class="dg-ic" style="background:${inativos ? "rgba(246,169,107,0.3)" : "rgba(168,224,197,0.5)"}">
+           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
+         <div><div class="dg-val">${inativos}</div><div class="dg-rot">de ${linhas.length} participantes estão há mais de 2 dias sem registrar</div></div></div>`
+      : "";
+    $("adLista").innerHTML = (linhas || []).length ? linhas.map(p => {
+      const u = ultimo[p.id];
+      const d = u ? diasDesde(u) : null;
+      const alerta = (d === null || d > 2);
+      const txt = u
+        ? (d === 0 ? "registrou hoje" : d === 1 ? "registrou ontem" : "sem registrar há " + d + " dias")
+        : "nunca registrou";
+      return `<div class="part-linha" style="${alerta ? "border-color:var(--pessego)" : ""}">
+        <div class="pn">${alerta ? "⚠️ " : ""}${p.nome}<small>usuário: ${p.username} · <span style="${alerta ? "color:var(--pessego);font-weight:600" : ""}">${txt}</span></small></div>
         <button title="Trocar senha" data-psen="${p.id}" data-pn="${p.nome}">🔑</button>
         <button title="Editar nome e usuário" data-ped="${p.id}" data-pn="${p.nome}" data-pu="${p.username}">✏️</button>
         <button title="Excluir" data-pex="${p.id}" data-pn="${p.nome}" data-pu="${p.username}">🗑</button>
-      </div>`
-    ).join("") : '<div class="nota">Nenhum participante cadastrado ainda.</div>';
+      </div>`;
+    }).join("") : '<div class="nota">Nenhum participante cadastrado ainda.</div>';
   } catch (e) {
     $("adLista").innerHTML = '<div class="nota">Erro: ' + e.message + '</div>';
   }
@@ -2086,17 +2382,67 @@ function skelHtml(n, alt) {
   return h;
 }
 
+
+/* ================= AJUSTES: header, config, historico ================= */
+const ICONE_SOL = '<circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.1 5.1l1.6 1.6M17.3 17.3l1.6 1.6M18.9 5.1l-1.6 1.6M6.7 17.3l-1.6 1.6"/>';
+const ICONE_LUA = '<path d="M20 13.5A8 8 0 0 1 10.5 4a8 8 0 1 0 9.5 9.5Z"/>';
+function atualizaIconeTema() {
+  const escuro = document.body.classList.contains("tema-escuro");
+  $("iconeTema").innerHTML = escuro ? ICONE_SOL : ICONE_LUA;
+  $("btnTema").setAttribute("aria-label", escuro ? "Mudar para tema claro" : "Mudar para tema escuro");
+}
+atualizaIconeTema();
+$("btnTema").addEventListener("click", () => { alternaTema(); atualizaIconeTema(); });
+$("logoHome").addEventListener("click", () => mostraTela("telaMeuDia"));
+
+/* Configuracoes com abas */
+function abrirConfig(aba) {
+  $("configNome").textContent = perfil ? (perfil.apelido || perfil.nome) : "";
+  $("verApp").textContent = APP_VERSAO;
+  trocaAbaConfig(aba || "lembretes");
+  mostraTela("telaConfig");
+  if (!aba || aba === "lembretes") { montaDiasNovoLembrete(); estadoPush(); listaLembretes(); }
+}
+function trocaAbaConfig(qual) {
+  const lem = qual === "lembretes";
+  $("abaLembretes").classList.toggle("ativo", lem);
+  $("abaSenha").classList.toggle("ativo", !lem);
+  $("painelLembretes").classList.toggle("ativo", lem);
+  $("painelSenha").classList.toggle("ativo", !lem);
+}
+$("abaLembretes").addEventListener("click", () => { trocaAbaConfig("lembretes"); montaDiasNovoLembrete(); estadoPush(); listaLembretes(); });
+$("abaSenha").addEventListener("click", () => { limpaAviso("avisoSenha"); trocaAbaConfig("senha"); });
+$("btnConfig").addEventListener("click", () => abrirConfig("lembretes"));
+
+/* Botao voltar do Android navega dentro do app, sem fechar */
+let pilhaTelas = [];
+let ignorarPop = false;
+function registraHistorico(id) {
+  if (ignorarPop) return;
+  const ultima = pilhaTelas[pilhaTelas.length - 1];
+  if (ultima === id) return;
+  pilhaTelas.push(id);
+  try { history.pushState({ tela: id }, ""); } catch {}
+}
+window.addEventListener("popstate", () => {
+  // remove a tela atual e volta para a anterior; nunca deixa a pilha vazia
+  pilhaTelas.pop();
+  const anterior = pilhaTelas[pilhaTelas.length - 1] || (sessao ? "telaMeuDia" : "telaLogin");
+  ignorarPop = true;
+  mostraTela(anterior);
+  ignorarPop = false;
+  // reempilha um estado para continuar interceptando o proximo "voltar"
+  try { history.pushState({ tela: anterior }, ""); } catch {}
+});
+
 /* ================= NAVEGACAO INFERIOR (rodada 2) ================= */
 const SVGM = (d) => '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + d + '</svg>';
 const ITENS_MAIS = [
   ["medidas", "Minhas Medidas", '<path d="M3 12h3l2-6l4 12l2-6h7"/>'],
   ["metas", "Minhas Metas", '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8"/>'],
-  ["lembretes", "Lembretes", '<path d="M18 9a6 6 0 1 0-12 0c0 6-2 7-2 7h16s-2-1-2-7"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/>'],
   ["regulamento", "Regulamento", '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h6M9 16h6"/>'],
   ["sobre", "Sobre o app", '<circle cx="12" cy="12" r="9"/><path d="M12 8.2v0.2M12 11v5"/>'],
   ["compartilhar", "Compartilhar no WhatsApp", '<circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.8l7.6-3.6M8.2 13.2l7.6 3.6"/>'],
-  ["tema", "Tema escuro / claro", '<circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5 5l1.4 1.4M17.6 17.6L19 19M19 5l-1.4 1.4M6.4 17.6L5 19"/>'],
-  ["senha", "Trocar minha senha", '<rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10"/>'],
   ["admin", "Admin", '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8l1.2 2.7l2.9-.6l.6 2.9l2.7 1.2l-1.5 2.5l1.5 2.5l-2.7 1.2l-.6 2.9l-2.9-.6L12 21.2l-1.2-2.7l-2.9.6l-.6-2.9l-2.7-1.2l1.5-2.5l-1.5-2.5l2.7-1.2l.6-2.9l2.9.6Z"/>'],
   ["sair", "Sair", '<path d="M14 4h5v16h-5"/><path d="M10 8l-4 4l4 4"/><path d="M6 12h10"/>']
 ];
@@ -2112,14 +2458,14 @@ function executaAcao(acao) {
   if (acao === "turma") abrirTurma();
   if (acao === "medidas") abrirMedidas();
   if (acao === "metas") abrirMetas();
-  if (acao === "lembretes") abrirLembretes();
+  if (acao === "lembretes") abrirConfig("lembretes");
   if (acao === "regulamento") abrirRegulamento();
   if (acao === "sobre") abrirSobre();
   if (acao === "sobre") abrirSobre();
   if (acao === "compartilhar") compartilharCard();
   if (acao === "tema") alternaTema();
   if (acao === "admin") abrirAdmin();
-  if (acao === "senha") { limpaAviso("avisoSenha"); mostraTela("telaSenha"); }
+  if (acao === "senha") { limpaAviso("avisoSenha"); abrirConfig("senha"); }
   if (acao === "sair") { apagaSessao(); mostraTela("telaLogin"); }
 }
 $("listaMais").addEventListener("click", ev => {
@@ -2151,13 +2497,13 @@ $("drawer").addEventListener("click", ev => {
   if (acao === "turma") abrirTurma();
   if (acao === "medidas") abrirMedidas();
   if (acao === "metas") abrirMetas();
-  if (acao === "lembretes") abrirLembretes();
+  if (acao === "lembretes") abrirConfig("lembretes");
   if (acao === "regulamento") abrirRegulamento();
   if (acao === "sobre") abrirSobre();
   if (acao === "compartilhar") compartilharCard();
   if (acao === "tema") alternaTema();
   if (acao === "admin") abrirAdmin();
-  if (acao === "senha") { limpaAviso("avisoSenha"); mostraTela("telaSenha"); }
+  if (acao === "senha") { limpaAviso("avisoSenha"); abrirConfig("senha"); }
   if (acao === "sair") { apagaSessao(); mostraTela("telaLogin"); }
 });
 
